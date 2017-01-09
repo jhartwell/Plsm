@@ -1,39 +1,57 @@
 defmodule Mix.Tasks.Plasm do
     use Mix.Task
-    alias Plasm.Database.MySql
     alias Plasm.Export
-
+    alias Plasm.Database.Common
     def run(_) do
-  
         {_,configs} = Code.eval_file("plasm.configs")
+        
         project = configs[:project]
         database = configs[:database]
         database_name = database[:database_name]
-        conn_str = MySql.create_connection_string(database[:server],database[:port],database[:username], database[:password],database[:driver_version],database_name)
-        
-        case MySql.connect(conn_str) do 
-            {:ok, conn} -> create_output conn, database_name, project[:name]
-            {_, msg} -> IO.puts msg
+        database_type = database[:type]
+        db = case database_type do
+                :mysql ->  IO.puts "MySql database selected";
+                        %Plasm.Database.MySql{server: database[:server],
+                            port: database[:port],
+                            username: database[:username], 
+                            password: database[:password],
+                            version: database[:driver_version],
+                            database_name: database_name}
+                _ -> IO.puts "No database type passed in. Defaulting to MySql";
+                        %Plasm.Database.MySql{server: database[:server],
+                            port: database[:port],
+                            username: database[:username], 
+                            password: database[:password],
+                            version: database[:driver_version],
+                            database_name: database_name}
+            end
+        conn_str = Plasm.Database.create_connection_string(db)
+
+        case Common.connect(conn_str) do
+            {:ok, conn} -> create_output(conn,db,project[:name])
+            {_, msg} -> IO.puts "Error: #{msg}"
         end
     end
 
+    @doc "Top level function that starts the export process. This will call all the functions necessary to create the model output"
     def create_output(conn, db,project_name) do
-        case  MySql.tables(conn, db) do
-            {:ok, tables} -> iterate_tables(tables, conn, project_name)
+        case  Plasm.Database.tables(db,conn) do
+            {:ok, tables} -> iterate_tables(db, tables, conn, project_name)
             {_, msg} -> {:error, msg}
         end
-        
     end
 
-    def iterate_tables(tables, conn, project_name) do
+    @doc "Iterate on each table that is provided and create the model based on that table"
+    def iterate_tables(db,tables, conn, project_name) do
         for table <- tables do
-            case MySql.get_table_fields(conn,table) do
+            case Plasm.Database.table_fields(db,conn,table) do
                 {:ok, fields} -> write_file(table,fields, project_name)
                 {_, msg} -> {:error, msg}
             end
         end       
     end
 
+    @doc "Write the fields from the given table to an elixir source file"
     def write_file(table, fields, project_name) do
         case File.open "#{table}.ex", [:write] do
             {:ok, file} -> output = Export.output_table(table, fields, project_name); IO.binwrite(file, output)
