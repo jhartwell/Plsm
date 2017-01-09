@@ -5,26 +5,38 @@ defmodule Mix.Tasks.Plasm do
 
     def run(_) do
   
-        configs = Code.eval_file("plasm.configs")
-        IO.inspect configs
-        {db,conn_str} = MySql.create_connection_string("localhost",3306,"root", "ashley#23","5.3","upr_api")
+        {_,configs} = Code.eval_file("plasm.configs")
+        project = configs[:project]
+        database = configs[:database]
+        database_name = database[:database_name]
+        conn_str = MySql.create_connection_string(database[:server],database[:port],database[:username], database[:password],database[:driver_version],database_name)
+        
         case MySql.connect(conn_str) do 
-            {:ok, conn} -> create_output conn, db
+            {:ok, conn} -> create_output conn, database_name, project[:name]
             {_, msg} -> IO.puts msg
         end
     end
 
-    def create_output(conn, db) do
-        tables = MySql.tables(conn, db)
+    def create_output(conn, db,project_name) do
+        case  MySql.tables(conn, db) do
+            {:ok, tables} -> iterate_tables(tables, conn, project_name)
+            {_, msg} -> {:error, msg}
+        end
+        
+    end
+
+    def iterate_tables(tables, conn, project_name) do
         for table <- tables do
-            fields = MySql.get_table_fields(conn,table)
-            write_file(table,fields)
+            case MySql.get_table_fields(conn,table) do
+                {:ok, fields} -> write_file(table,fields, project_name)
+                {_, msg} -> {:error, msg}
+            end
         end       
     end
 
-    def write_file(table, fields) do
+    def write_file(table, fields, project_name) do
         case File.open "#{table}.ex", [:write] do
-            {:ok, file} -> output = Export.output_table(table, fields); IO.binwrite(file, output)
+            {:ok, file} -> output = Export.output_table(table, fields, project_name); IO.binwrite(file, output)
             {_,msg} -> IO.puts msg
         end
     end
@@ -64,6 +76,7 @@ defmodule Mix.Tasks.Plasm.Config do
         <> "database = [\n" 
         <> format_item("server", "localhost",",")
         <> format_item("port", "3306",",")
+        <> format_item("database_name", "Name of database",",")
         <> format_item("driver_version","5.3",",")
         <> format_item("username","username",",")
         <> format_item("password", "password")

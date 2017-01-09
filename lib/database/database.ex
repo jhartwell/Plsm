@@ -10,16 +10,19 @@ defmodule Plasm.Database do
             @doc "Get all of the columns and their types from the database"
             def get_table_fields(conn,table ) do
                 case :odbc.describe_table(conn, table |> to_charlist) do
-                    {:ok, lst} -> lst
-                    _ -> []
+                    {:ok, lst} -> {:ok, lst}
+                    {_, msg} -> {:error, msg}
                 end
             end
 
             @doc "Get all of the tables from the given database"
             def get_tables(conn, query) do
                 erlang_formatted_query = to_char_list(query)
-                {_,_,rows} = :odbc.sql_query(conn,erlang_formatted_query)
-                rows
+                case :odbc.sql_query(conn,erlang_formatted_query) do
+                    {_,_,rows} -> {:ok, rows}
+                    {_,msg} -> {:error, msg}
+                end
+                
             end
 
             def convert_to_utf8(raw) do
