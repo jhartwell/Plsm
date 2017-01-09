@@ -8,9 +8,17 @@ The only thing required are Mix and the ODBC driver for the database that you ar
 
 ## Running Plasm
 
-First, in order to run plasm you need to generate a config file. You do this by running `mix plasm.config`. This will create a skeleton config file. You will need to make your changes in order to run Plasm succesfully.
+First, in order to run plasm you need to generate a config file. You do this by running
 
-Once you have your config file generated then you are ready to run plasm. You do this by running `mix plasm`. The model files are generated in the folder that you are running from.
+`mix plasm.config`
+
+This will create a skeleton config file. You will need to make your changes in order to run Plasm succesfully.
+
+Once you have your config file generated then you are ready to run plasm. You do this by running 
+
+`mix plasm`. 
+
+The model files are generated in the folder that you are running from.
 
 ## Forthcoming updates
 
