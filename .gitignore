@@ -1,0 +1,7 @@
+/_build
+/cover
+/deps
+erl_crash.dump
+*.ez
+plasm.configs
+.vscode
