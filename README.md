@@ -16,7 +16,7 @@ This will create a skeleton config file. You will need to make your changes in o
 
 Once you have your config file generated then you are ready to run plasm. You do this by running 
 
-`mix plasm`. 
+`mix plasm`
 
 The model files are generated in the folder that you are running from.
 
