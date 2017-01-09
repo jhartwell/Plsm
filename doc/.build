@@ -4,13 +4,14 @@ fonts/icomoon.eot
 fonts/icomoon.svg
 fonts/icomoon.ttf
 fonts/icomoon.woff
-dist/sidebar_items-33d3a4504a.js
+dist/sidebar_items-304a1cc72b.js
 api-reference.html
 index.html
 404.html
 Mix.Tasks.Plasm.html
 Mix.Tasks.Plasm.Config.html
-Plasm.Database.html
-Plasm.Database.Adapter.html
+Plasm.Common.html
+Plasm.Database.Common.html
 Plasm.Database.MySql.html
 Plasm.Export.html
+Plasm.Database.html

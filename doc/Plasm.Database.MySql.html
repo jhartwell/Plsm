@@ -5,12 +5,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.14.5">
-    <title>Plasm.Database.MySql – plasm v0.1.0</title>
+    <title>Plasm.Database.MySql – plasm v0.2.0</title>
     <link rel="stylesheet" href="dist/app-a07cea761b.css" />
     
       <link rel="canonical" href="https://hexdocs.pm/plasm_ecto/Plasm.Database.MySql.html" />
     
-    <script src="dist/sidebar_items-33d3a4504a.js"></script>
+    <script src="dist/sidebar_items-304a1cc72b.js"></script>
   </head>
   <body data-type="modules">
     <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
@@ -28,7 +28,7 @@
         plasm
       </h1>
       <h2 class="sidebar-projectVersion">
-        v0.1.0
+        v0.2.0
       </h2>
     </div>
     
@@ -49,6 +49,8 @@
     
 
     
+      <li><a id="protocols-list" href="#full-list">Protocols</a></li>
+    
   </ul>
   <div class="gradient"></div>
   <ul id="full-list" class="sidebar-fullList"></ul>
@@ -60,7 +62,7 @@
 
 
       <h1>
-        <small class="visible-xs">plasm v0.1.0</small>
+        <small class="visible-xs">plasm v0.2.0</small>
         Plasm.Database.MySql
         
         
@@ -69,195 +71,9 @@
       
 
       
-        <section id="summary" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#summary">
-              <i class="icon-link"></i>
-            </a>
-            Summary
-          </h1>
-          
-
-          
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
-    <div class="summary-row">
-  <div class="summary-signature">
-    <a href="#connect/2">connect(conn_string, opts \\ [])</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Connect to the database</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#convert_to_utf8/1">convert_to_utf8(raw)</a>
-  </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#create_connection_string/6">create_connection_string(server, port \\ 3306, user_name, password, version, database_name)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Create the connection string specific for this version of MySql. This will require the MySql ODBC driver to be installed on the computer in order to run</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_table_fields/2">get_table_fields(conn, table)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Get all of the columns and their types from the database</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_tables/2">get_tables(conn, query)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Get all of the tables from the given database</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#tables/2">tables(conn, db_name)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Get the tables from the specific database. We get a list of tuple/1 so we need to get the first element of that tuple then convert it to UTF-8 from UTF-16 in order</p>
-<pre><code class="elixir">to be able to actual retreive the file name. Elixir uses UTF8 strings so if we don&#39;t do the conversion that means we will have errors.&#39;</code></pre>
-</div>
-  
-</div>
-
-  </div>
-
-
-          
-
-          
-
-        </section>
-      
 
       
 
-      
-        <section id="functions" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#functions">
-              <i class="icon-link"></i>
-            </a>
-            Functions
-          </h1>
-          <div class="detail" id="connect/2">
-  
-    <span id="connect/1" />
-  
-  <div class="detail-header">
-    <a href="#connect/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">connect(conn_string, opts \\ [])</span>
-    
-    
-    
-  </div>
-  <section class="docstring">
-    <p>Connect to the database</p>
-
-  </section>
-</div>
-<div class="detail" id="convert_to_utf8/1">
-  
-  <div class="detail-header">
-    <a href="#convert_to_utf8/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">convert_to_utf8(raw)</span>
-    
-    
-    
-  </div>
-  <section class="docstring">
-    
-  </section>
-</div>
-<div class="detail" id="create_connection_string/6">
-  
-    <span id="create_connection_string/5" />
-  
-  <div class="detail-header">
-    <a href="#create_connection_string/6" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">create_connection_string(server, port \\ 3306, user_name, password, version, database_name)</span>
-    
-    
-    
-  </div>
-  <section class="docstring">
-    <p>Create the connection string specific for this version of MySql. This will require the MySql ODBC driver to be installed on the computer in order to run</p>
-
-  </section>
-</div>
-<div class="detail" id="get_table_fields/2">
-  
-  <div class="detail-header">
-    <a href="#get_table_fields/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">get_table_fields(conn, table)</span>
-    
-    
-    
-  </div>
-  <section class="docstring">
-    <p>Get all of the columns and their types from the database</p>
-
-  </section>
-</div>
-<div class="detail" id="get_tables/2">
-  
-  <div class="detail-header">
-    <a href="#get_tables/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">get_tables(conn, query)</span>
-    
-    
-    
-  </div>
-  <section class="docstring">
-    <p>Get all of the tables from the given database</p>
-
-  </section>
-</div>
-<div class="detail" id="tables/2">
-  
-  <div class="detail-header">
-    <a href="#tables/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">tables(conn, db_name)</span>
-    
-    
-    
-  </div>
-  <section class="docstring">
-    <p>Get the tables from the specific database. We get a list of tuple/1 so we need to get the first element of that tuple then convert it to UTF-8 from UTF-16 in order</p>
-<pre><code class="elixir">to be able to actual retreive the file name. Elixir uses UTF8 strings so if we don&#39;t do the conversion that means we will have errors.&#39;</code></pre>
-
-  </section>
-</div>
-
-        </section>
       
 
       

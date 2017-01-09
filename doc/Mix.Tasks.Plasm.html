@@ -5,12 +5,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.14.5">
-    <title>Mix.Tasks.Plasm – plasm v0.1.0</title>
+    <title>Mix.Tasks.Plasm – plasm v0.2.0</title>
     <link rel="stylesheet" href="dist/app-a07cea761b.css" />
     
       <link rel="canonical" href="https://hexdocs.pm/plasm_ecto/Mix.Tasks.Plasm.html" />
     
-    <script src="dist/sidebar_items-33d3a4504a.js"></script>
+    <script src="dist/sidebar_items-304a1cc72b.js"></script>
   </head>
   <body data-type="modules">
     <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
@@ -28,7 +28,7 @@
         plasm
       </h1>
       <h2 class="sidebar-projectVersion">
-        v0.1.0
+        v0.2.0
       </h2>
     </div>
     
@@ -49,6 +49,8 @@
     
 
     
+      <li><a id="protocols-list" href="#full-list">Protocols</a></li>
+    
   </ul>
   <div class="gradient"></div>
   <ul id="full-list" class="sidebar-fullList"></ul>
@@ -60,7 +62,7 @@
 
 
       <h1>
-        <small class="visible-xs">plasm v0.1.0</small>
+        <small class="visible-xs">plasm v0.2.0</small>
         Mix.Tasks.Plasm
         
         
@@ -88,11 +90,17 @@
     <a href="#create_output/3">create_output(conn, db, project_name)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Top level function that starts the export process. This will call all the functions necessary to create the model output</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#iterate_tables/3">iterate_tables(tables, conn, project_name)</a>
+    <a href="#iterate_tables/4">iterate_tables(db, tables, conn, project_name)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Iterate on each table that is provided and create the model based on that table</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -109,6 +117,9 @@ a list of command line args</p>
   <div class="summary-signature">
     <a href="#write_file/3">write_file(table, fields, project_name)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Write the fields from the given table to an elixir source file</p>
+</div>
   
 </div>
 
@@ -144,22 +155,24 @@ a list of command line args</p>
     
   </div>
   <section class="docstring">
-    
+    <p>Top level function that starts the export process. This will call all the functions necessary to create the model output</p>
+
   </section>
 </div>
-<div class="detail" id="iterate_tables/3">
+<div class="detail" id="iterate_tables/4">
   
   <div class="detail-header">
-    <a href="#iterate_tables/3" class="detail-link" title="Link to this function">
+    <a href="#iterate_tables/4" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">iterate_tables(tables, conn, project_name)</span>
+    <span class="signature">iterate_tables(db, tables, conn, project_name)</span>
     
     
     
   </div>
   <section class="docstring">
-    
+    <p>Iterate on each table that is provided and create the model based on that table</p>
+
   </section>
 </div>
 <div class="detail" id="run/1">
@@ -192,7 +205,8 @@ a list of command line args.</p>
     
   </div>
   <section class="docstring">
-    
+    <p>Write the fields from the given table to an elixir source file</p>
+
   </section>
 </div>
 
