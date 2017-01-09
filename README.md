@@ -20,6 +20,14 @@ Once you have your config file generated then you are ready to run plasm. You do
 
 The model files are generated in the folder that you are running from.
 
+## Getting Plasm
+
+You can add 
+
+`{:plasm_ecto, ">= 0.2.0"}`
+
+to deps in your mix.exs and that will download the package for you
+
 ## Forthcoming updates
 
 The plan is to add the following features:
