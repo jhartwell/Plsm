@@ -4,7 +4,7 @@ Plasm generates Ecto models based on existing database tables in your database. 
 
 
 ## Dependencies
-The only thing required are Mix and the ODBC driver for the database that you are working with. Currently we only support MySql but other database support is coming soon. All data access is done through Erlang so we limit dependencies on 3rd party libraries
+The only thing required are Erlang, Mix and the ODBC driver for the database that you are working with. Currently we only support MySql but other database support is coming soon. All data access is done through Erlang so we limit dependencies on 3rd party libraries
 
 ## Running Plasm
 
