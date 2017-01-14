@@ -1,4 +1,4 @@
-defmodule Plasm.Database.Common do
+defmodule Plsm.Database.Common do
     @doc "Connect to the database with the given connection string"
     def connect(conn_string) do
         :odbc.start

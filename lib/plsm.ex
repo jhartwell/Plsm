@@ -1,9 +1,9 @@
-defmodule Mix.Tasks.Plasm do
+defmodule Mix.Tasks.Plsm do
     use Mix.Task
-    alias Plasm.Export
-    alias Plasm.Database.Common
+    alias Plsm.Export
+    alias Plsm.Database.Common
     def run(_) do
-        {_,configs} = Code.eval_file("plasm.configs")
+        {_,configs} = Code.eval_file("Plsm.configs")
         
         project = configs[:project]
         database = configs[:database]
@@ -11,21 +11,21 @@ defmodule Mix.Tasks.Plasm do
         database_type = database[:type]
         db = case database_type do
                 :mysql ->  IO.puts "MySql database selected";
-                        %Plasm.Database.MySql{server: database[:server],
+                        %Plsm.Database.MySql{server: database[:server],
                             port: database[:port],
                             username: database[:username], 
                             password: database[:password],
                             version: database[:driver_version],
                             database_name: database_name}
                 _ -> IO.puts "No database type passed in. Defaulting to MySql";
-                        %Plasm.Database.MySql{server: database[:server],
+                        %Plsm.Database.MySql{server: database[:server],
                             port: database[:port],
                             username: database[:username], 
                             password: database[:password],
                             version: database[:driver_version],
                             database_name: database_name}
             end
-        conn_str = Plasm.Database.create_connection_string(db)
+        conn_str = Plsm.Database.create_connection_string(db)
 
         case Common.connect(conn_str) do
             {:ok, conn} -> create_output(conn,db,project[:name])
@@ -35,7 +35,7 @@ defmodule Mix.Tasks.Plasm do
 
     @doc "Top level function that starts the export process. This will call all the functions necessary to create the model output"
     def create_output(conn, db,project_name) do
-        case  Plasm.Database.tables(db,conn) do
+        case  Plsm.Database.tables(db,conn) do
             {:ok, tables} -> iterate_tables(db, tables, conn, project_name)
             {_, msg} -> {:error, msg}
         end
@@ -44,7 +44,7 @@ defmodule Mix.Tasks.Plasm do
     @doc "Iterate on each table that is provided and create the model based on that table"
     def iterate_tables(db,tables, conn, project_name) do
         for table <- tables do
-            case Plasm.Database.table_fields(db,conn,table) do
+            case Plsm.Database.table_fields(db,conn,table) do
                 {:ok, fields} -> write_file(table,fields, project_name)
                 {_, msg} -> {:error, msg}
             end
@@ -60,15 +60,15 @@ defmodule Mix.Tasks.Plasm do
     end
 end
 
-defmodule Mix.Tasks.Plasm.Config do
-    use Mix.Task
+defmodule Mix.Tasks.Plsm.Config do
+use Mix.Task
 
-    @doc "Generate the basic config file for a plasm run"
+    @doc "Generate the basic config file for a Plsm run"
     def run(_) do       
-        case File.open("plasm.configs", [:write]) do
+        case File.open("Plsm.configs", [:write]) do
             {:ok, file} -> 
                 case IO.binwrite file, output_doc do
-                    {:ok} -> "Created plasm.configs"
+                    {:ok} -> "Created Plsm.configs"
                     _ -> "Could not create the configs. Please ensure you have write access to this folder before trying again."
                 end
             {_, msg} -> IO.puts msg
@@ -103,5 +103,19 @@ defmodule Mix.Tasks.Plasm.Config do
 
     defp format_item(name, value, comma \\ "") do
         "\t\t\t#{name}: \"#{value}\"#{comma}\n"
+    end
+end
+defmodule Mix.Tasks.Plasm.Config do
+    use Mix.Task
+    def run(_) do
+        Mix.Tasks.Plsm.Config.run
+    end
+end
+
+defmodule Mix.Tasks.Plasm do
+    use Mix.Task
+
+    def run(_) do
+        Mix.Tasks.Plsm.run
     end
 end
