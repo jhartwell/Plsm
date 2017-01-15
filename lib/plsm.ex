@@ -3,59 +3,16 @@ defmodule Mix.Tasks.Plsm do
     alias Plsm.Export
     alias Plsm.Database.Common
     def run(_) do
-        {_,configs} = Code.eval_file("Plsm.configs")
+        {_,config_file} = Code.eval_file("Plsm.configs")
+        configs = %Plsm.Common.Configs { database: config_file[:database], project: config_file[:project] }
         
-        project = configs[:project]
-        database = configs[:database]
-        database_name = database[:database_name]
-        database_type = database[:type]
-        db = case database_type do
-                :mysql ->  IO.puts "MySql database selected";
-                        %Plsm.Database.MySql{server: database[:server],
-                            port: database[:port],
-                            username: database[:username], 
-                            password: database[:password],
-                            version: database[:driver_version],
-                            database_name: database_name}
-                _ -> IO.puts "No database type passed in. Defaulting to MySql";
-                        %Plsm.Database.MySql{server: database[:server],
-                            port: database[:port],
-                            username: database[:username], 
-                            password: database[:password],
-                            version: database[:driver_version],
-                            database_name: database_name}
-            end
-        conn_str = Plsm.Database.create_connection_string(db)
-
-        case Common.connect(conn_str) do
-            {:ok, conn} -> create_output(conn,db,project[:name])
-            {_, msg} -> IO.puts "Error: #{msg}"
-        end
-    end
-
-    @doc "Top level function that starts the export process. This will call all the functions necessary to create the model output"
-    def create_output(conn, db,project_name) do
-        case  Plsm.Database.tables(db,conn) do
-            {:ok, tables} -> iterate_tables(db, tables, conn, project_name)
-            {_, msg} -> {:error, msg}
-        end
-    end
-
-    @doc "Iterate on each table that is provided and create the model based on that table"
-    def iterate_tables(db,tables, conn, project_name) do
+        tables = configs
+                |> Plsm.Database.Common.create
+                |> Plsm.Database.connect
+                |> Plsm.Database.get_tables
+        ## TODO: Write columns to file -> pass configs into process?
         for table <- tables do
-            case Plsm.Database.table_fields(db,conn,table) do
-                {:ok, fields} -> write_file(table,fields, project_name)
-                {_, msg} -> {:error, msg}
-            end
-        end       
-    end
-
-    @doc "Write the fields from the given table to an elixir source file"
-    def write_file(table, fields, project_name) do
-        case File.open "#{table}.ex", [:write] do
-            {:ok, file} -> output = Export.output_table(table, fields, project_name); IO.binwrite(file, output)
-            {_,msg} -> IO.puts msg
+            get_columns(table.db, table)
         end
     end
 end
@@ -95,7 +52,6 @@ use Mix.Task
         <> format_item("server", "localhost",",")
         <> format_item("port", "3306",",")
         <> format_item("database_name", "Name of database",",")
-        <> format_item("driver_version","5.3",",")
         <> format_item("username","username",",")
         <> format_item("password", "password")
         <> "\t\t  ]"

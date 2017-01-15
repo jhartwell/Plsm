@@ -1,5 +1,6 @@
 defprotocol Plasm.Database do
-    def create_connection_string(db)
-    def tables(db,conn)
-    def table_fields(db,conn,table)
+    def create(db, configs)
+    def connect(db)
+    def get_tables(db)
+    def get_columns(db, table)
 end

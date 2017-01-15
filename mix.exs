@@ -18,7 +18,8 @@ defmodule Plasm.Mixfile do
 
   defp deps do
     [
-      {:ex_doc, ">= 0.0.0", only: :dev} 
+      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:mariaex, "~> 0.7.3"} 
     ]
   end
 
