@@ -3,5 +3,9 @@ defmodule Plsm.Database.Column do
 end
 
 defmodule Plsm.Database.Table do
-    defstruct name: String, columns: [Plsm.Database.Column], db: Plsm.Database
+    defstruct columns: [Plsm.Database.Column], header: Plsm.Database.TableHeader
+end
+
+defmodule Plsm.Database.TableHeader do
+    defstruct name: String, database: nil
 end

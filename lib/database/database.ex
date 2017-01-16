@@ -1,4 +1,4 @@
-defprotocol Plasm.Database do
+defprotocol Plsm.Database do
     def create(db, configs)
     def connect(db)
     def get_tables(db)

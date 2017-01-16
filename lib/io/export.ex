@@ -1,4 +1,4 @@
-defmodule Plasm.Export do
+defmodule Plsm.IO.Export do
    
 
     @doc "Generate the schema field based on the database type"
@@ -13,14 +13,23 @@ defmodule Plasm.Export do
         end
     end
 
+    def write(schema, name) do
+        case File.open "#{name}.ex", [:write] do
+            {:ok, file} -> IO.binwrite file, schema
+            _ -> IO.puts "Could not write #{name} to file"
+        end
+    end
     
-
+    @spec prepare(Plsm.Database.Table, String.t) :: String.t
     @doc "Format the text of a specific table with the fields that are passed in. This is strictly formatting and will not verify the fields with the database"
-    def output_table(table,fields, project_name) do
-        output = module_declaration(project_name) <> model_inclusion <> schema_declaration table
-        
-        field_output = Enum.reduce(fields, "", fn(x,acc) -> acc <> type_output x end) 
-        output = output <> field_output
+    def prepare(table, project_name) do
+        table.columns |> inspect |> IO.puts
+        output = module_declaration(project_name) <> model_inclusion <> schema_declaration table.header.name
+        column_output = ""
+        for column <- table.columns do
+            column_output = column_output <> type_output {column.name, column.type}
+        end
+        output = output <> column_output
         output = output <> four_space end_declaration
         output <> end_declaration
     end

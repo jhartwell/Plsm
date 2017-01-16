@@ -1,18 +1,23 @@
 defmodule Mix.Tasks.Plsm do
     use Mix.Task
     alias Plsm.Export
-    alias Plsm.Database.Common
+    
     def run(_) do
         {_,config_file} = Code.eval_file("Plsm.configs")
-        configs = %Plsm.Common.Configs { database: config_file[:database], project: config_file[:project] }
+        configs = %Plsm.Configs { database: config_file[:database], project: config_file[:project] }
         
-        tables = configs
+        tableHeaders = configs
                 |> Plsm.Database.Common.create
                 |> Plsm.Database.connect
                 |> Plsm.Database.get_tables
-        ## TODO: Write columns to file -> pass configs into process?
-        for table <- tables do
-            get_columns(table.db, table)
+
+        for header <- tableHeaders do
+            Plsm.Database.get_columns(header.database, header)
+            |> Enum.map(fn(x) -> %Plsm.Database.Table {header: header, columns: x} end)
+            |> Enum.map(fn(x) -> Plsm.IO.Export.prepare(x,configs.project[:name]) end)
+            |> Enum.map(fn(x) -> x |> inspect |> IO.puts end)
+            #|> Plsm.IO.Export.prepare configs.project[:name]
+            #|> Plsm.IO.Export.write(header.name)
         end
     end
 end
