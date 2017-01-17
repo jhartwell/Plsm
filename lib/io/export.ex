@@ -14,7 +14,6 @@ defmodule Plsm.IO.Export do
     end
 
     def write(schema, name) do
-        IO.puts "#{schema} - #{name}"
         case File.open "#{name}.ex", [:write] do
             {:ok, file} -> IO.binwrite file, schema
             _ -> IO.puts "Could not write #{name} to file"
