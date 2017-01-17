@@ -1,20 +1,23 @@
 defmodule Mix.Tasks.Plsm do
     use Mix.Task
     alias Plsm.Export
-    
+
     def run(_) do
+        # ensure all dependencies are started manually.
+        {:ok, _started} = Application.ensure_all_started(:postgrex)
+
         {_,config_file} = Code.eval_file("Plsm.configs")
         configs = %Plsm.Configs { database: config_file[:database], project: config_file[:project] }
-        
+
         tableHeaders = configs
                 |> Plsm.Database.Common.create
                 |> Plsm.Database.connect
                 |> Plsm.Database.get_tables
 
         for header <- tableHeaders do
-            columns = Plsm.Database.get_columns(header.database, header) 
+            columns = Plsm.Database.get_columns(header.database, header)
             table = %Plsm.Database.Table {header: header, columns: columns}
-            
+
             Plsm.IO.Export.prepare(table, configs.project[:name])
             |> Plsm.IO.Export.write(header.name, configs.project[:destination])
         end
