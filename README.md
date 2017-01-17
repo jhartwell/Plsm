@@ -32,8 +32,8 @@ to deps in your mix.exs and that will download the package for you
 
 The plan is to add the following features:
   * Support for other databases
-  * the ability to save to other paths
-  * better error handling
+  * Primary key support
+  * Foreign key support
   * more unit tests
 
 If you have any questions you can reach me via email at jon@dontbreakthebuild.com
