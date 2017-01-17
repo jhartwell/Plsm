@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.14.5">
-    <title>Mix.Tasks.Plasm.Config – plsm v0.2.0</title>
+    <title>Plsm.Database – plsm v0.2.0</title>
     <link rel="stylesheet" href="dist/app-a07cea761b.css" />
     
-      <link rel="canonical" href="https://hexdocs.pm/plsm/Mix.Tasks.Plasm.Config.html" />
+      <link rel="canonical" href="https://hexdocs.pm/plsm/Plsm.Database.html" />
     
     <script src="dist/sidebar_items-304a1cc72b.js"></script>
   </head>
-  <body data-type="modules">
+  <body data-type="protocols">
     <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
 
     <div class="main">
@@ -63,7 +63,9 @@
 
       <h1>
         <small class="visible-xs">plsm v0.2.0</small>
-        Mix.Tasks.Plasm.Config
+        Plsm.Database
+        
+          <small>protocol</small>
         
         
       </h1>
@@ -79,6 +81,19 @@
             Summary
           </h1>
           
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:t/0">t()</a>
+  </div>
+  
+</div>
+
+  </div>
+
 
           
   <div class="summary-functions summary">
@@ -87,12 +102,26 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#run/1">run()</a>
+    <a href="#connect/1">connect(db)</a>
   </div>
   
-    <div class="summary-synopsis"><p>A task needs to implement <code class="inline">run</code> which receives
-a list of command line args</p>
 </div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#create/2">create(db, configs)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_columns/2">get_columns(db, table)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_tables/1">get_tables(db)</a>
+  </div>
   
 </div>
 
@@ -107,6 +136,39 @@ a list of command line args</p>
       
 
       
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <i class="icon-link"></i>
+            </a>
+            Types
+          </h1>
+          <div class="types-list">
+            <div class="detail" id="t:t/0">
+  
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">t()</span>
+    
+    
+    
+      <div class="specs">
+        
+          <pre>t() :: term</pre>
+        
+      </div>
+    
+  </div>
+  <section class="docstring">
+    
+  </section>
+</div>
+
+          </div>
+        </section>
+      
 
       
         <section id="functions" class="details-list">
@@ -116,22 +178,64 @@ a list of command line args</p>
             </a>
             Functions
           </h1>
-          <div class="detail" id="run/1">
+          <div class="detail" id="connect/1">
   
   <div class="detail-header">
-    <a href="#run/1" class="detail-link" title="Link to this function">
+    <a href="#connect/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">run()</span>
+    <span class="signature">connect(db)</span>
     
     
     
   </div>
   <section class="docstring">
-    <p>A task needs to implement <code class="inline">run</code> which receives
-a list of command line args.</p>
-<p>Callback implementation for <a href="https://hexdocs.pm/mix/Mix.Task.html#c:run/1"><code class="inline">Mix.Task.run/1</code></a>.</p>
-
+    
+  </section>
+</div>
+<div class="detail" id="create/2">
+  
+  <div class="detail-header">
+    <a href="#create/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">create(db, configs)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="get_columns/2">
+  
+  <div class="detail-header">
+    <a href="#get_columns/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">get_columns(db, table)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="get_tables/1">
+  
+  <div class="detail-header">
+    <a href="#get_tables/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">get_tables(db)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    
   </section>
 </div>
 

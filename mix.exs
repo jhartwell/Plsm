@@ -1,8 +1,8 @@
-defmodule Plasm.Mixfile do
+defmodule Plsm.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :plasm,
+    [app: :plsm,
      version: "0.2.0",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
@@ -25,17 +25,17 @@ defmodule Plasm.Mixfile do
 
   defp description do
     """
-      Plasm generates Ecto models based on existing database tables and populates the fields of the model.
+      Plsm generates Ecto models based on existing database tables and populates the fields of the model.
     """
   end
 
   defp package do
     [
-     name: :plasm_ecto,
+     name: :plsm,
      files: ["lib","mix.exs", "README.md", "LICENSE"],
      maintainers: ["Jon Hartwell"],
      licenses: ["MIT License"],
-     links: %{"GitHub" => "https://github.com/jhartwell/Plasm"}
+     links: %{"GitHub" => "https://github.com/jhartwell/Plsm"}
     ]
   end
 end

@@ -24,7 +24,7 @@ The model files are generated in the folder that you are running from.
 
 You can add 
 
-`{:plsm, ">= 0.2.0"}`
+`{:plsm, "~> 0.2.0"}`
 
 to deps in your mix.exs and that will download the package for you
 

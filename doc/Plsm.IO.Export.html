@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.14.5">
-    <title>Mix.Tasks.Plasm.Config – plsm v0.2.0</title>
+    <title>Plsm.IO.Export – plsm v0.2.0</title>
     <link rel="stylesheet" href="dist/app-a07cea761b.css" />
     
-      <link rel="canonical" href="https://hexdocs.pm/plsm/Mix.Tasks.Plasm.Config.html" />
+      <link rel="canonical" href="https://hexdocs.pm/plsm/Plsm.IO.Export.html" />
     
     <script src="dist/sidebar_items-304a1cc72b.js"></script>
   </head>
@@ -63,7 +63,7 @@
 
       <h1>
         <small class="visible-xs">plsm v0.2.0</small>
-        Mix.Tasks.Plasm.Config
+        Plsm.IO.Export
         
         
       </h1>
@@ -87,12 +87,26 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#run/1">run()</a>
+    <a href="#prepare/2">prepare(table, project_name)</a>
   </div>
   
-    <div class="summary-synopsis"><p>A task needs to implement <code class="inline">run</code> which receives
-a list of command line args</p>
+    <div class="summary-synopsis"><p>Format the text of a specific table with the fields that are passed in. This is strictly formatting and will not verify the fields with the database</p>
 </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#type_output/1">type_output(field)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Generate the schema field based on the database type</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#write/2">write(schema, name)</a>
+  </div>
   
 </div>
 
@@ -116,22 +130,57 @@ a list of command line args</p>
             </a>
             Functions
           </h1>
-          <div class="detail" id="run/1">
+          <div class="detail" id="prepare/2">
   
   <div class="detail-header">
-    <a href="#run/1" class="detail-link" title="Link to this function">
+    <a href="#prepare/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">run()</span>
+    <span class="signature">prepare(table, project_name)</span>
+    
+    
+    
+      <div class="specs">
+        
+          <pre>prepare(Plsm.Database.Table, <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a></pre>
+        
+      </div>
+    
+  </div>
+  <section class="docstring">
+    <p>Format the text of a specific table with the fields that are passed in. This is strictly formatting and will not verify the fields with the database</p>
+
+  </section>
+</div>
+<div class="detail" id="type_output/1">
+  
+  <div class="detail-header">
+    <a href="#type_output/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">type_output(field)</span>
     
     
     
   </div>
   <section class="docstring">
-    <p>A task needs to implement <code class="inline">run</code> which receives
-a list of command line args.</p>
-<p>Callback implementation for <a href="https://hexdocs.pm/mix/Mix.Task.html#c:run/1"><code class="inline">Mix.Task.run/1</code></a>.</p>
+    <p>Generate the schema field based on the database type</p>
 
+  </section>
+</div>
+<div class="detail" id="write/2">
+  
+  <div class="detail-header">
+    <a href="#write/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">write(schema, name)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    
   </section>
 </div>
 
