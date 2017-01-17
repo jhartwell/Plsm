@@ -12,12 +12,11 @@ defmodule Mix.Tasks.Plsm do
                 |> Plsm.Database.get_tables
 
         for header <- tableHeaders do
-            Plsm.Database.get_columns(header.database, header)
-            |> Enum.map(fn(x) -> %Plsm.Database.Table {header: header, columns: x} end)
-            |> Enum.map(fn(x) -> Plsm.IO.Export.prepare(x,configs.project[:name]) end)
-            |> Enum.map(fn(x) -> x |> inspect |> IO.puts end)
-            #|> Plsm.IO.Export.prepare configs.project[:name]
-            #|> Plsm.IO.Export.write(header.name)
+            columns = Plsm.Database.get_columns(header.database, header) 
+            table = %Plsm.Database.Table {header: header, columns: columns}
+            
+            Plsm.IO.Export.prepare(table, configs.project[:name])
+            |> Plsm.IO.Export.write(header.name)
         end
     end
 end

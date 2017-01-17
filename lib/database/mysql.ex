@@ -35,8 +35,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
         {_,result} = Mariaex.query(db.connection, "SHOW TABLES")
         result.rows
         |> List.flatten
-        |> Enum.zip([db])
-        |> Enum.map(fn(x) -> %Plsm.Database.TableHeader { database: elem(x,1), name: elem(x,0) } end)
+        |> Enum.map(fn(x) -> %Plsm.Database.TableHeader { database: db, name: x } end)
     end
 
     @spec get_columns(Plsm.Database.MySql, Plsm.Database.Table) :: [Plsm.Database.Column]
@@ -50,8 +49,26 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
 
     defp to_column(row) do
         {_,name} = Enum.fetch(row,0)
-        {_,type} = Enum.fetch(row,1)
+        type = Enum.fetch(row,1) |> get_type
         primary_key? = Enum.fetch(row,3) == "PRI"
         %Plsm.Database.Column {name: name, type: type, primary_key: primary_key?}
+    end
+
+    defp get_type(start_type) do
+        {_,type} = start_type
+        upcase = String.upcase type
+        cond do 
+            String.starts_with?(upcase, "INT") == true -> :integer
+            String.starts_with?(upcase, "BIGINT") == true -> :integer
+            String.contains?(upcase, "CHAR") == true -> :string
+            String.starts_with?(upcase, "TEXT") == true -> :string
+            String.starts_with?(upcase, "FLOAT") == true -> :float
+            String.starts_with?(upcase, "DOUBLE") == true -> :float
+            String.starts_with?(upcase, "DECIMAL") == true -> :decimal
+            String.starts_with?(upcase, "DATE") == true -> :date
+            String.starts_with?(upcase, "DATETIME") == true -> :date
+            String.starts_with?(upcase, "TIMESTAMP") == true -> :date
+            true -> :none
+        end
     end
 end
