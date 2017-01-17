@@ -1,4 +1,4 @@
-defmodule Plasm.Export do
+defmodule Plsm.Export do
    
 
     @doc "Generate the schema field based on the database type"

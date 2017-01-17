@@ -1,9 +1,9 @@
-defmodule Plasm.Database.MySql do
+defmodule Plsm.Database.MySql do
     defstruct server: "localhost", port: "3306", username: "username", password: "password", database_name: "db", version: "5.3"
 end
 
 
-defimpl Plasm.Database, for: Plasm.Database.MySql do
+defimpl Plsm.Database, for: Plsm.Database.MySql do
     
     @doc "Create the ODBC connection string for the MySql database"
     def create_connection_string(db) do
@@ -13,7 +13,7 @@ defimpl Plasm.Database, for: Plasm.Database.MySql do
     @doc "Get the tables from the given database"
     def tables(db, conn) do
         case tables(db,conn, "show tables from #{db.database_name}") do
-            {:ok, tables} -> {:ok, tables |> Enum.map(fn(x) -> elem(x,0) |> Plasm.Common.convert_utf16_to_utf8 end) }
+            {:ok, tables} -> {:ok, tables |> Enum.map(fn(x) -> elem(x,0) |> Plsm.Common.convert_utf16_to_utf8 end) }
             {_, msg} -> {:error, msg}
         end
     end   
