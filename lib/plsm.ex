@@ -16,7 +16,7 @@ defmodule Mix.Tasks.Plsm do
             table = %Plsm.Database.Table {header: header, columns: columns}
             
             Plsm.IO.Export.prepare(table, configs.project[:name])
-            |> Plsm.IO.Export.write(header.name)
+            |> Plsm.IO.Export.write(header.name, configs.project[:destination])
         end
     end
 end
@@ -45,7 +45,10 @@ use Mix.Task
         "###################################################################################################################################################\n"
         <> "# Describes information about the project you are working on. The name will determine what the module name is for each file. Spaces will be removed\n"
         <> "###################################################################################################################################################\n\n"
-        <> "project = [\n#{format_item "name", "Module name"}\t\t  ]"
+        <> "project = [\n"
+        <> format_item("name","module name", ",")
+        <> format_item("destination","output path")
+        <> "\t\t  ]"
     end
 
     defp output_database do

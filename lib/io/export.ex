@@ -13,8 +13,8 @@ defmodule Plsm.IO.Export do
         end
     end
 
-    def write(schema, name) do
-        case File.open "#{name}.ex", [:write] do
+    def write(schema, name, path \\ "") do
+        case File.open "#{path}#{name}.ex", [:write] do
             {:ok, file} -> IO.binwrite file, schema
             _ -> IO.puts "Could not write #{name} to file"
         end
