@@ -1,7 +1,9 @@
 defmodule Plsm.Database.Common do
-    @doc "Connect to the database with the given connection string"
-    def connect(conn_string) do
-        :odbc.start
-        to_char_list(conn_string) |> :odbc.connect([])
+    @spec create(Plsm.Common.Configs) :: Plsm.Database
+    def create(configs) do
+       case configs.database[:type] do
+        :mysql -> IO.puts "Using MySql..."; Plsm.Database.create %Plsm.Database.MySql{}, configs  
+        _ -> IO.puts "Using default database MySql..."; Plsm.Database.create %Plsm.Database.MySql{}, configs  
+       end 
     end
 end
