@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.14.5">
-    <title>Plsm.IO.Export – plsm v0.2.0</title>
+    <title>Plsm.IO.Export – plsm v1.0.0</title>
     <link rel="stylesheet" href="dist/app-a07cea761b.css" />
     
       <link rel="canonical" href="https://hexdocs.pm/plsm/Plsm.IO.Export.html" />
@@ -28,7 +28,7 @@
         plsm
       </h1>
       <h2 class="sidebar-projectVersion">
-        v0.2.0
+        v1.0.0
       </h2>
     </div>
     
@@ -62,7 +62,7 @@
 
 
       <h1>
-        <small class="visible-xs">plsm v0.2.0</small>
+        <small class="visible-xs">plsm v1.0.0</small>
         Plsm.IO.Export
         
         
@@ -105,8 +105,11 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#write/2">write(schema, name)</a>
+    <a href="#write/3">write(schema, name, path \\ &quot;&quot;)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Write the given schema to file</p>
+</div>
   
 </div>
 
@@ -148,7 +151,7 @@
     
   </div>
   <section class="docstring">
-    <p>Format the text of a specific table with the fields that are passed in. This is strictly formatting and will not verify the fields with the database</p>
+    <pre><code class="elixir">Format the text of a specific table with the fields that are passed in. This is strictly formatting and will not verify the fields with the database</code></pre>
 
   </section>
 </div>
@@ -164,23 +167,32 @@
     
   </div>
   <section class="docstring">
-    <p>Generate the schema field based on the database type</p>
+    <pre><code class="elixir">Generate the schema field based on the database type</code></pre>
 
   </section>
 </div>
-<div class="detail" id="write/2">
+<div class="detail" id="write/3">
+  
+    <span id="write/2" />
   
   <div class="detail-header">
-    <a href="#write/2" class="detail-link" title="Link to this function">
+    <a href="#write/3" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">write(schema, name)</span>
+    <span class="signature">write(schema, name, path \\ &quot;&quot;)</span>
     
     
+    
+      <div class="specs">
+        
+          <pre>write(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>, <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>, <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>) :: Any</pre>
+        
+      </div>
     
   </div>
   <section class="docstring">
-    
+    <pre><code class="elixir">Write the given schema to file.</code></pre>
+
   </section>
 </div>
 

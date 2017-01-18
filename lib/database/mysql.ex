@@ -5,6 +5,10 @@ end
 
 defimpl Plsm.Database, for: Plsm.Database.MySql do
     
+    @doc """
+        Create a MySql database struct for use in connecting to the MySql database. We pass in the configs in order to 
+        properly connect
+    """
     @spec create(Plsm.Database.MySql, Plsm.Configs) :: Plsm.Database.MySql
     def create(db, configs) do
          %Plsm.Database.MySql{
