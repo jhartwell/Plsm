@@ -13,7 +13,7 @@ defmodule Plsm.Mixfile do
   end
 
   def application do
-    []
+    [extra_applications: [:mariaex]]
   end
 
   defp deps do
