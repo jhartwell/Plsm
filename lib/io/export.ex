@@ -35,6 +35,7 @@ defmodule Plsm.IO.Export do
         column_output = table.columns |> Enum.reduce("",fn(x,a) -> a <> type_output({x.name, x.type}) end)
         output = output <> column_output
         output = output <> four_space end_declaration
+        output = output <> changeset table.columns
         output <> end_declaration
     end
 
@@ -69,5 +70,17 @@ defmodule Plsm.IO.Export do
 
     defp eight_space(text) do
         "        " <> text
+    end
+
+    defp changeset(columns) do
+        output = four_space "def changeset(struct, params \\\\ %{}) do\n"
+        output = output <> eight_space "struct\n"
+        output = output <> eight_space "|> cast(params, " <> changeset_list(columns) <> ")\n"
+        output <> four_space "end\n"
+    end
+
+    defp changeset_list(columns) do
+        changelist = Enum.reduce(columns,"", fn(x,acc) -> acc <> ":#{x.name}, " end)
+        String.slice(changelist,0,String.length(changelist) - 2)
     end
 end
