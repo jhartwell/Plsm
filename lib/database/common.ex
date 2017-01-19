@@ -1,4 +1,7 @@
 defmodule Plsm.Database.Common do
+    @doc """
+        Create a struct that implements the Plsm.Database protocol based on the type of database that is passed in
+    """
     @spec create(Plsm.Common.Configs) :: Plsm.Database
     def create(configs) do
        case configs.database[:type] do
