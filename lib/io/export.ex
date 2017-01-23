@@ -31,7 +31,7 @@ defmodule Plsm.IO.Export do
     """
     @spec prepare(Plsm.Database.Table, String.t) :: String.t
     def prepare(table, project_name) do
-        output = module_declaration(project_name) <> model_inclusion <> primary_key_declaration(table.columns) <> schema_declaration(table.header.name)
+        output = module_declaration(project_name,table.header.name) <> model_inclusion <> primary_key_declaration(table.columns) <> schema_declaration(table.header.name)
         column_output = table.columns |> Enum.reduce("",fn(x,a) -> a <> type_output({x.name, x.type}) end)
         output = output <> column_output
         output = output <> four_space end_declaration
@@ -48,8 +48,12 @@ defmodule Plsm.IO.Export do
          end)
     end
 
-    defp module_declaration(project_name) do
-        "defmodule #{project_name} do\n"
+    defp module_declaration(project_name, table_name) do
+        namespace = table_name 
+        |> String.split("_") 
+        |> Enum.map(fn x -> String.capitalize x end)
+        |> Enum.reduce(fn x, acc -> acc <> x end)
+        "defmodule #{project_name}.#{namespace} do\n"
     end
 
     defp model_inclusion do
