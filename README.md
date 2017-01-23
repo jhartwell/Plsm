@@ -20,7 +20,7 @@ You are able to change the location of the model file output in the configuratio
 
 You can add 
 
-`{:plsm, "~> 1.0.0"}`
+`{:plsm, "=> 1.1.2"}`
 
 to deps in your mix.exs and that will download the package for you
 
