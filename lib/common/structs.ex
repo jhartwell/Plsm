@@ -1,4 +1,3 @@
 defmodule Plsm.Configs do
-    
-    defstruct database: [], project: []
+  defstruct database: [], project: []
 end
