@@ -13,13 +13,14 @@ defmodule Plsm.Mixfile do
   end
 
   def application do
-    [extra_applications: [:mariaex]]
+    [applications: [:postgrex, :mariaex]]
   end
 
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:mariaex, ">= 0.7.3"} 
+      {:mariaex, "~> 0.8.0"},
+      {:postgrex, "~> 0.13.0"}
     ]
   end
 
