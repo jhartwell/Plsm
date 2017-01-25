@@ -6,11 +6,11 @@ defmodule Plsm.IO.Export do
     """
     def type_output (field) do
         case field do
-            {name, type} when type == :integer -> eight_space "field :#{name}, :integer\n"
-            {name, type} when type == :decimal -> eight_space "field :#{name}, :decimal\n"
-            {name, type} when type == :float -> eight_space  "field :#{name}, :float\n"
-            {name, type} when type == :string -> eight_space "field :#{name}, :string\n"
-            {name,type} when type == :date -> eight_space "field :#{name}, :utc_datetime\n"
+            {name, type} when type == :integer -> four_space "field :#{name}, :integer\n"
+            {name, type} when type == :decimal -> four_space "field :#{name}, :decimal\n"
+            {name, type} when type == :float -> four_space  "field :#{name}, :float\n"
+            {name, type} when type == :string -> four_space "field :#{name}, :string\n"
+            {name,type} when type == :date -> four_space "field :#{name}, :utc_datetime\n"
             _ -> ""
         end
     end
@@ -42,7 +42,7 @@ defmodule Plsm.IO.Export do
     @spec primary_key_declaration([Plsm.Database.Column]) :: String.t
     defp primary_key_declaration(columns) do
         Enum.reduce(columns, "", fn(x,acc) -> case x.primary_key do 
-            true -> acc <> four_space "@primary_key {:#{x.name}, :#{x.type}, []}\n"
+            true -> acc <> two_space "@primary_key {:#{x.name}, :#{x.type}, []}\n"
             _ -> acc
             end
          end)
@@ -57,11 +57,11 @@ defmodule Plsm.IO.Export do
     end
 
     defp model_inclusion do
-        four_space "use Ecto.Schema\n\n"
+        two_space "use Ecto.Schema\n\n"
     end
 
     defp schema_declaration(table_name) do
-        four_space "schema \"#{table_name}\" do\n"
+        two_space "schema \"#{table_name}\" do\n"
     end
 
     defp end_declaration do
@@ -72,15 +72,15 @@ defmodule Plsm.IO.Export do
         "    " <> text
     end
 
-    defp eight_space(text) do
-        "        " <> text
+    defp two_space(text) do
+        "  " <> text
     end
 
     defp changeset(columns) do
-        output = four_space "def changeset(struct, params \\\\ %{}) do\n"
-        output = output <> eight_space "struct\n"
-        output = output <> eight_space "|> cast(params, " <> changeset_list(columns) <> ")\n"
-        output <> four_space "end\n"
+        output = two_space "def changeset(struct, params \\\\ %{}) do\n"
+        output = output <> four_space "struct\n"
+        output = output <> four_space "|> cast(params, " <> changeset_list(columns) <> ")\n"
+        output <> two_space "end\n"
     end
 
     defp changeset_list(columns) do
