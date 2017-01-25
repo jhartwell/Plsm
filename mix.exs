@@ -3,7 +3,7 @@ defmodule Plsm.Mixfile do
 
   def project do
     [app: :plsm,
-     version: "0.2.0",
+     version: "1.1.2",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -13,13 +13,12 @@ defmodule Plsm.Mixfile do
   end
 
   def application do
-    [applications: [:postgrex]]
+    [applications: [:postgrex, :mariaex]]
   end
 
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:db_connection, "~> 1.1"},
       {:mariaex, "~> 0.8.0"},
       {:postgrex, "~> 0.13.0"}
     ]
