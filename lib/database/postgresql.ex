@@ -46,7 +46,22 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
 
   @spec get_columns(Plsm.Database.PostgreSQL, Plsm.Database.Table) :: [Plsm.Database.Column]
   def get_columns(db, table) do
-    {_, result} = Postgrex.query(db.connection, "SELECT column_name, data_type FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '#{table.name}';", [])
+    {_, result} = Postgrex.query(db.connection, "
+      SELECT DISTINCT \
+        a.attname as column_name, \
+        format_type(a.atttypid, a.atttypmod) as data_type, \
+        coalesce(i.indisprimary,false) as primary_key, \
+        a.attnum as num \
+      FROM pg_attribute a  \
+      JOIN pg_class pgc ON pgc.oid = a.attrelid \
+      LEFT JOIN pg_index i ON  \
+          (pgc.oid = i.indrelid AND i.indkey[0] = a.attnum) \
+      WHERE a.attnum > 0 AND pgc.oid = a.attrelid \
+      AND pg_table_is_visible(pgc.oid) \
+      AND NOT a.attisdropped \
+      AND pgc.relname = '#{table.name}' \
+      ORDER BY a.attnum; \
+    ", [])
     result.rows
       |> Enum.map(&to_column/1)
   end
@@ -54,7 +69,8 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
   defp to_column(row) do
     {_,name} = Enum.fetch(row,0)
     type = Enum.fetch(row,1) |> get_type
-    %Plsm.Database.Column {name: name, type: type, primary_key: false}
+    {_, is_pk} = Enum.fetch(row,2)
+    %Plsm.Database.Column {name: name, type: type, primary_key: is_pk}
   end
 
   defp get_type(start_type) do
@@ -72,6 +88,7 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
         String.starts_with?(upcase, "DATE") == true -> :date
         String.starts_with?(upcase, "DATETIME") == true -> :date
         String.starts_with?(upcase, "TIMESTAMP") == true -> :date
+        String.starts_with?(upcase, "BOOLEAN") == true -> :boolean
         true -> :none
     end
   end
