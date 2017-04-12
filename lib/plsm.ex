@@ -58,7 +58,8 @@ use Mix.Task
         "#######################################################################################################################################################\n"
         <> "# Enter the database information for the DB you're connecting to. Please note that type is optional and the default is mysql"
         <> "#######################################################################################################################################################\n\n"
-        <> "database = [\n" 
+        <> "database = [\n"
+        <> format_item("type", "your database type", ",")
         <> format_item("server", "localhost",",")
         <> format_item("port", "3306",",")
         <> format_item("database_name", "Name of database",",")
