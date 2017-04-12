@@ -85,6 +85,8 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
         String.starts_with?(upcase, "FLOAT") == true -> :float
         String.starts_with?(upcase, "DOUBLE") == true -> :float
         String.starts_with?(upcase, "DECIMAL") == true -> :decimal
+        String.starts_with?(upcase, "NUMERIC") == true -> :decimal
+        String.starts_with?(upcase, "JSONB") == true -> :map
         String.starts_with?(upcase, "DATE") == true -> :date
         String.starts_with?(upcase, "DATETIME") == true -> :date
         String.starts_with?(upcase, "TIMESTAMP") == true -> :date
