@@ -64,7 +64,7 @@ use Mix.Task
         <> format_item("database_name", "Name of database",",")
         <> format_item("username","username",",")
         <> format_item("password", "password")
-        <> format_atom("type", ":mysql")
+        <> format_atom("type", :mysql)
         <> "\t\t  ]"
     end
 
@@ -72,8 +72,8 @@ use Mix.Task
         "\t\t\t#{name}: \"#{value}\"#{comma}\n"
     end
 
-    defp format_atom(name, value, comma \\ "") do
-      "\t\t\t#{name}: #{value}\n"
+    defp format_atom(name, value, comma \\ "") when is_atom(value) do
+      "\t\t\t#{name}: :#{value}\n"
     end
 end
 defmodule Mix.Tasks.Plasm.Config do
