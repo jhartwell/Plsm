@@ -96,7 +96,7 @@ defmodule Plsm.IO.Export do
 
   @spec prepare(String.t, Plsm.Database.Column) :: String.t
   defp belongs_to_output(project_name, column) do
-    column_name = column.name
+    column_name = column.name |> String.trim_trailing("_id")
     table_name = Plsm.Database.TableHeader.table_name(column.foreign_table)
     "\n" <> four_space "belongs_to :#{column_name}, #{project_name}.#{table_name}"
   end
