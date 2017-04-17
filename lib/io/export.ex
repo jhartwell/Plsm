@@ -32,7 +32,8 @@ defmodule Plsm.IO.Export do
   @spec prepare(Plsm.Database.Table, String.t) :: String.t
   def prepare(table, project_name) do
       output = module_declaration(project_name,table.header.name) <> model_inclusion <> primary_key_declaration(table.columns) <> schema_declaration(table.header.name)
-      column_output = table.columns |> Enum.reduce("",fn(x,a) -> a <> type_output({x.name, x.type}) end)
+      trimmed_columns = remove_foreign_keys(table.columns)
+      column_output = trimmed_columns |> Enum.reduce("",fn(x,a) -> a <> type_output({x.name, x.type}) end)
       output = output <> column_output
       belongs_to_output = Enum.filter(table.columns, fn(column) ->
         column.foreign_table != nil and column.foreign_table != nil
@@ -99,5 +100,11 @@ defmodule Plsm.IO.Export do
     column_name = column.name |> String.trim_trailing("_id")
     table_name = Plsm.Database.TableHeader.table_name(column.foreign_table)
     "\n" <> four_space "belongs_to :#{column_name}, #{project_name}.#{table_name}"
+  end
+
+  defp remove_foreign_keys(columns) do
+    Enum.filter(columns, fn(column) ->
+      column.foreign_table == nil and column.foreign_field == nil
+    end)
   end
 end
