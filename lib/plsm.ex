@@ -56,7 +56,7 @@ use Mix.Task
 
     defp output_database do
         "#######################################################################################################################################################\n"
-        <> "# Enter the database information for the DB you're connecting to. The driver version has to correspond to the ODBC driver version for your MySQL driver\n"
+        <> "# Enter the database information for the DB you're connecting to. Please note that type is optional and the default is mysql"
         <> "#######################################################################################################################################################\n\n"
         <> "database = [\n" 
         <> format_item("server", "localhost",",")
@@ -64,11 +64,16 @@ use Mix.Task
         <> format_item("database_name", "Name of database",",")
         <> format_item("username","username",",")
         <> format_item("password", "password")
+        <> format_atom("type", ":mysql")
         <> "\t\t  ]"
     end
 
     defp format_item(name, value, comma \\ "") do
         "\t\t\t#{name}: \"#{value}\"#{comma}\n"
+    end
+
+    defp format_atom(name, value, comma \\ "") do
+      "\t\t\t#{name}: #{value}\n"
     end
 end
 defmodule Mix.Tasks.Plasm.Config do
