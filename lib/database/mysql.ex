@@ -12,11 +12,11 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
   @spec create(Plsm.Database.MySql, Plsm.Configs) :: Plsm.Database.MySql
   def create(db, configs) do
     %Plsm.Database.MySql{
-      server: configs.database[:server],
-      port: configs.database[:port],
-      username: configs.database[:username],
-      password: configs.database[:password],
-      database_name: configs.database[:database_name]
+      server: configs.database.server,
+      port: configs.database.port,
+      username: configs.database.username,
+      password: configs.database.password,
+      database_name: configs.database.database_name
     }     
   end
 
