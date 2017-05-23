@@ -31,7 +31,7 @@ defmodule Plsm.IO.Export do
   """
   @spec prepare(Plsm.Database.Table, String.t) :: String.t
   def prepare(table, project_name) do
-      output = module_declaration(project_name,table.header.name) <> model_inclusion <> primary_key_declaration(table.columns) <> schema_declaration(table.header.name)
+      output = module_declaration(project_name,table.header.name) <> model_inclusion() <> primary_key_declaration(table.columns) <> schema_declaration(table.header.name)
       trimmed_columns = remove_foreign_keys(table.columns)
       column_output = trimmed_columns |> Enum.reduce("",fn(x,a) -> a <> type_output({x.name, x.type}) end)
       output = output <> column_output
@@ -43,9 +43,9 @@ defmodule Plsm.IO.Export do
       end)
       output = output <> belongs_to_output <> "\n"
 
-      output = output <> two_space end_declaration
-      output = output <> changeset table.columns
-      output <> end_declaration
+      output = output <> two_space(end_declaration())
+      output = output <> changeset(table.columns)
+      output <> end_declaration()
   end
 
   @spec primary_key_declaration([Plsm.Database.Column]) :: String.t
