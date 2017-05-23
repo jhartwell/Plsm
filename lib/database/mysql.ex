@@ -10,7 +10,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
     properly connect
   """
   @spec create(Plsm.Database.MySql, Plsm.Configs) :: Plsm.Database.MySql
-  def create(db, configs) do
+  def create(_db, configs) do
     %Plsm.Database.MySql{
       server: configs.database.server,
       port: configs.database.port,

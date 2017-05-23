@@ -5,7 +5,7 @@ end
 defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
 
   @spec create(Plsm.Database.PostgreSQL, Plsm.Configs) :: Plsm.Database.PostgreSQL
-  def create(db, configs) do
+  def create(_db, configs) do
     %Plsm.Database.PostgreSQL{
       server: configs.database.server,
       port: configs.database.port,

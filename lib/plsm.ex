@@ -27,59 +27,22 @@ defmodule Mix.Tasks.Plsm.Config do
 use Mix.Task
 
     @doc "Generate the basic config file for a Plsm run"
-    def run(_) do       
-        case File.open("Plsm.configs", [:write]) do
-            {:ok, file} -> 
-                case IO.binwrite file, output_doc() do
-                    {:ok} -> "Created Plsm.configs"
-                    _ -> "Could not create the configs. Please ensure you have write access to this folder before trying again."
-                end
-            {_, msg} -> IO.puts msg
+    def run(params) do       
+        {opts, _, _} = OptionParser.parse(params, strict: [config_file: :string])
+        file_name = Keyword.get(opts, :config_file, "config/config.exs")
+        case Plsm.Config.Config.write file_name do
+          {:error, msg} -> IO.puts msg
+          _ -> IO.puts "Configs written to #{file_name}\n"
         end
     end
 
-    defp output_doc do
-        output_project() <> "\n\n" <> output_database()
-    end
-
-    defp output_project do
-        # get nice formatting for the project node
-        "###################################################################################################################################################\n"
-        <> "# Describes information about the project you are working on. The name will determine what the module name is for each file. Spaces will be removed\n"
-        <> "###################################################################################################################################################\n\n"
-        <> "project = [\n"
-        <> format_item("name","module name", ",")
-        <> format_item("destination","output path")
-        <> "\t\t  ]"
-    end
-
-    defp output_database do
-        "#######################################################################################################################################################\n"
-        <> "# Enter the database information for the DB you're connecting to. Please note that type is optional and the default is mysql"
-        <> "#######################################################################################################################################################\n\n"
-        <> "database = [\n" 
-        <> format_item("server", "localhost",",")
-        <> format_item("port", "3306",",")
-        <> format_item("database_name", "Name of database",",")
-        <> format_item("username","username",",")
-        <> format_item("password", "password")
-        <> format_atom("type", ":mysql")
-        <> "\t\t  ]"
-    end
-
-    defp format_item(name, value, comma \\ "") do
-        "\t\t\t#{name}: \"#{value}\"#{comma}\n"
-    end
-
-    defp format_atom(name, value, comma \\ "") do
-      "\t\t\t#{name}: #{value}#{comma}\n"
-    end
+    
 end
 
 defmodule Mix.Tasks.Plasm.Config do
     use Mix.Task
-    def run(_) do
-        Mix.Tasks.Plsm.Config.run nil
+    def run(params) do
+        Mix.Tasks.Plsm.Config.run params
     end
 end
 
