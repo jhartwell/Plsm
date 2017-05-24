@@ -26,17 +26,26 @@ defmodule Plsm.IO.Export do
     end
   end
     
-  @doc """ 
-    Format the text of a specific table with the fields that are passed in. This is strictly formatting and will not verify the fields with the database
+  @doc """
+  Format the text of a specific table with the fields that are passed in. This is strictly formatting and will not verify the fields with the database
   """
   @spec prepare(Plsm.Database.Table, String.t) :: String.t
   def prepare(table, project_name) do
-      output = module_declaration(project_name,table.header.name) <> model_inclusion <> primary_key_declaration(table.columns) <> schema_declaration(table.header.name)
-      column_output = table.columns |> Enum.reduce("",fn(x,a) -> a <> type_output({x.name, x.type}) end)
+      output = module_declaration(project_name,table.header.name) <> model_inclusion() <> primary_key_declaration(table.columns) <> schema_declaration(table.header.name)
+      trimmed_columns = remove_foreign_keys(table.columns)
+      column_output = trimmed_columns |> Enum.reduce("",fn(x,a) -> a <> type_output({x.name, x.type}) end)
       output = output <> column_output
-      output = output <> four_space end_declaration
-      output = output <> changeset table.columns
-      output <> end_declaration
+      belongs_to_output = Enum.filter(table.columns, fn(column) ->
+        column.foreign_table != nil and column.foreign_table != nil
+      end)
+      |> Enum.reduce("",fn(column, a) ->
+        a <> belongs_to_output(project_name, column)
+      end)
+      output = output <> belongs_to_output <> "\n"
+
+      output = output <> two_space(end_declaration())
+      output = output <> changeset(table.columns)
+      output <> end_declaration()
   end
 
   @spec primary_key_declaration([Plsm.Database.Column]) :: String.t
@@ -49,12 +58,10 @@ defmodule Plsm.IO.Export do
   end
 
   defp module_declaration(project_name, table_name) do
-    namespace = table_name 
-      |> String.split("_") 
-      |> Enum.map(fn x -> String.capitalize x end)
-      |> Enum.reduce(fn x, acc -> acc <> x end)
+      namespace = Plsm.Database.TableHeader.table_name(table_name)
       "defmodule #{project_name}.#{namespace} do\n"
   end
+
 
   defp model_inclusion do
     two_space "use Ecto.Schema\n\n"
@@ -86,5 +93,18 @@ defmodule Plsm.IO.Export do
   defp changeset_list(columns) do
     changelist = Enum.reduce(columns,"", fn(x,acc) -> acc <> ":#{x.name}, " end)
     String.slice(changelist,0,String.length(changelist) - 2)
+  end
+
+  @spec prepare(String.t, Plsm.Database.Column) :: String.t
+  defp belongs_to_output(project_name, column) do
+    column_name = column.name |> String.trim_trailing("_id")
+    table_name = Plsm.Database.TableHeader.table_name(column.foreign_table)
+    "\n" <> four_space "belongs_to :#{column_name}, #{project_name}.#{table_name}"
+  end
+
+  defp remove_foreign_keys(columns) do
+    Enum.filter(columns, fn(column) ->
+      column.foreign_table == nil and column.foreign_field == nil
+    end)
   end
 end

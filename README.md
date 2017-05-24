@@ -6,9 +6,9 @@ Plsm generates Ecto models based on existing database tables in your database. C
 
 First, in order to run plsm, you need to generate a config file. You do this by running
 
-`mix plsm.config`
+`mix plsm.config --config-file <name>`
 
-This will create a skeleton config file. You will need to make your changes in order to run Plsm succesfully.
+This will create a skeleton config file to the given config file. If you don't specify a config.exs file this will be written to the "config/config.exs" file. If you are using another structure, such as Phoenix, then you need to pass in your dev.exs, since this is a def only process. You will need to make changes to the generated Plsm configs in the config file in order to allow Plsm to function correctly.
 
 Once you have your config file generated then you are ready to run plsm. You do this by running 
 
@@ -20,7 +20,7 @@ You are able to change the location of the model file output in the configuratio
 
 You can add 
 
-`{:plsm, "=> 1.1.3"}`
+`{:plsm, "=> 2.0.0"}`
 
 to deps in your mix.exs and that will download the package for you
 
@@ -28,20 +28,16 @@ to deps in your mix.exs and that will download the package for you
 
 To start, you must create a config file. Now you can create one by hand or you can use the command `mix plsm.config` to generate a barebones config. The config is just two keyword lists that are used to access the data.
 
-### Project Section
+### Configuration Options
 
-The project section is used to generate module declarations. The name keyword is the name of the module that you want this schema file generated under while the destination path is the location that you want the output to go.
-
-### Database Section
-
-This section contains all the information needed to connect to your database:
-  
+  * module_name -> This is the name of the module that the models will be placed under
+  * destination -> The output location for the generated models  
   * server -> this is the name of the server that you are connecting to. It can be a DNS name or an IP Address. This needs to be filled in as there are no defaults
   * port -> The port that the database server is listening on. This needs to be provided as there may not be a default for your server
   * database_name -> the name of the database that you are connecting to. This is required.
   * username -> The username that is used to connect. Make sure that there is sufficient privelages to be able to connect, query tables as well as query information schemas on the database. The schema information is used to find the index/keys on each table
   * password -> This is necessary as there is no default nor is there any handling of a blank password currently.
-  * type -> This dictates which database vendor you are using. We currently support PostgreSQL and MySQL. If no value is entered then it will default to MySQL.
+  * type -> This dictates which database vendor you are using. We currently support PostgreSQL and MySQL. If no value is entered then it will default to MySQL. **Do note that this is an atom and not a string**
 
 
 ### Supported Databases
