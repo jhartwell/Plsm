@@ -24,11 +24,8 @@ You can add
 
 to deps in your mix.exs and that will download the package for you
 
-## Using plsm
 
-To start, you must create a config file. Now you can create one by hand or you can use the command `mix plsm.config` to generate a barebones config. The config is just two keyword lists that are used to access the data.
-
-### Configuration Options
+## Configuration Options
 
   * module_name -> This is the name of the module that the models will be placed under
   * destination -> The output location for the generated models  
@@ -40,11 +37,12 @@ To start, you must create a config file. Now you can create one by hand or you c
   * type -> This dictates which database vendor you are using. We currently support PostgreSQL and MySQL. If no value is entered then it will default to MySQL. **Do note that this is an atom and not a string**
 
 
-### Supported Databases
+## Supported Databases
   
   We currently support the following databases:
-    * MySQL
-    * PostgreSQL
+
+  * MySQL
+  * PostgreSQL
 
  We are planning to add support to other databases but that has not been implemented yet. Please feel free to contribute commits that add different database vendor support!
 
