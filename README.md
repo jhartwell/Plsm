@@ -8,7 +8,7 @@ First, in order to run plsm, you need to generate a config file. You do this by 
 
 `mix plsm.config --config-file <name>`
 
-This will create a skeleton config file to the given config file. If you don't specify a config.exs file this will be written to the "config/config.exs" file. If you are using another structure, such as Phoenix, then you need to pass in your dev.exs, since this is a def only process. You will need to make changes to the generated Plsm configs in the config file in order to allow Plsm to function correctly.
+This will create a skeleton config file to the given config file. If you don't specify a config.exs file this will be written to the "config/config.exs" file. If you are using another structure, such as Phoenix, then you need to pass in your dev.exs, since this is a dev only process. You will need to make changes to the generated Plsm configs in the config file in order to allow Plsm to function correctly.
 
 Once you have your config file generated then you are ready to run plsm. You do this by running 
 
