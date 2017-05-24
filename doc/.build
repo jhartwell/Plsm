@@ -4,7 +4,7 @@ fonts/icomoon.eot
 fonts/icomoon.svg
 fonts/icomoon.ttf
 fonts/icomoon.woff
-dist/sidebar_items-edc060b342.js
+dist/sidebar_items-9bb4af6d20.js
 api-reference.html
 index.html
 404.html
@@ -12,10 +12,15 @@ Mix.Tasks.Plasm.html
 Mix.Tasks.Plasm.Config.html
 Mix.Tasks.Plsm.html
 Mix.Tasks.Plsm.Config.html
+Plsm.Common.Configs.html
+Plsm.Config.Config.html
 Plsm.Configs.html
+Plsm.Configs.Database.html
+Plsm.Configs.Project.html
 Plsm.Database.Column.html
 Plsm.Database.Common.html
 Plsm.Database.MySql.html
+Plsm.Database.PostgreSQL.html
 Plsm.Database.Table.html
 Plsm.Database.TableHeader.html
 Plsm.IO.Export.html
