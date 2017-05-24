@@ -30,10 +30,20 @@ use Mix.Task
     def run(params) do       
         {opts, _, _} = OptionParser.parse(params, strict: [config_file: :string])
         file_name = Keyword.get(opts, :config_file, "config/config.exs")
-        case Plsm.Config.Config.write file_name do
-          {:error, msg} -> IO.puts msg
-          _ -> IO.puts "Configs written to #{file_name}\n"
+        case config_exists?(file_name) do
+          false ->  case Plsm.Config.Config.write file_name do
+                      {:error, msg} -> IO.puts msg
+                      _ -> IO.puts "Configs written to #{file_name}\n"
+                    end
+          true -> IO.puts "Configs have already been created, please change the current config."
         end
+    end
+
+    defp config_exists?(filename) do
+      case File.read(filename) do
+        {:ok, content} -> String.contains?(content, ":plsm")
+        _ -> false
+      end
     end
 
     
