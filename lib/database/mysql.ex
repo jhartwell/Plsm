@@ -63,6 +63,8 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
     cond do 
       String.starts_with?(upcase, "INT") == true -> :integer
       String.starts_with?(upcase, "BIGINT") == true -> :integer
+      String.starts_with?(upcase, "TINYINT") == true -> :integer
+      String.starts_with?(upcase, "BIT") == true -> :integer
       String.contains?(upcase, "CHAR") == true -> :string
       String.starts_with?(upcase, "TEXT") == true -> :string
       String.starts_with?(upcase, "FLOAT") == true -> :float
