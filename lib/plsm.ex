@@ -17,8 +17,8 @@ defmodule Mix.Tasks.Plsm do
             columns = Plsm.Database.get_columns(header.database, header)
             table = %Plsm.Database.Table {header: header, columns: columns}
 
-            Plsm.IO.Export.prepare(table, configs.project[:name])
-            |> Plsm.IO.Export.write(header.name, configs.project[:destination])
+            Plsm.IO.Export.prepare(table, configs.project.name)
+            |> Plsm.IO.Export.write(header.name, configs.project.destination)
         end
     end
 end
