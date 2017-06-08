@@ -1,3 +1,11 @@
+## Changes in 2.0.1
+
+## Bugfixes
+
+* Fixed issue with generating output when there are no foreign keys. Previously was erroring out and the new fix will ignore foreign key generation if there are no foreign keys
+
+
+
 ## New in 2.0.0
 
 * Updated config generation. We now use config/config.exs as the default location for the configs. You can pass in the flag --config-file with a file name to use a different file (such as the dev.exs in Phoenix)
