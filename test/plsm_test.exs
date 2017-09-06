@@ -1,6 +1,6 @@
-defmodule PlasmTest do
+defmodule PlsmTest do
   use ExUnit.Case
-  doctest Plasm
+  doctest Plsm
 
   test "the truth" do
     assert 1 + 1 == 2

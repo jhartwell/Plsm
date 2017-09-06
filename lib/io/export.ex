@@ -1,5 +1,4 @@
 defmodule Plsm.IO.Export do
-   
 
     @doc """
       Generate the schema field based on the database type
@@ -50,18 +49,18 @@ defmodule Plsm.IO.Export do
 
   @spec primary_key_declaration([Plsm.Database.Column]) :: String.t
   defp primary_key_declaration(columns) do
-    Enum.reduce(columns, "", fn(x,acc) -> case x.primary_key do 
-        true -> acc <> two_space "@primary_key {:#{x.name}, :#{x.type}, []}\n"
-        _ -> acc
-       end
-    end)
+    Enum.reduce(columns, "", fn(x,acc) -> acc <> create_primary_key(x)  end)
   end
+  
+  @spec create_primary_key(Plsm.Database.Column) :: String.t
+  defp create_primary_key(%Plsm.Database.Column{primary_key: true, name: "id"}), do: ""
+  defp create_primary_key(%Plsm.Database.Column{primary_key: true, name: name, type: type}), do: "@primary_key {:#{name}, :#{type}, []}\n" 
+  defp create_primary_key(_), do: ""
 
   defp module_declaration(project_name, table_name) do
-      namespace = Plsm.Database.TableHeader.table_name(table_name)
-      "defmodule #{project_name}.#{namespace} do\n"
+    namespace = Plsm.Database.TableHeader.table_name(table_name)
+    "defmodule #{project_name}.#{namespace} do\n"
   end
-
 
   defp model_inclusion do
     two_space "use Ecto.Schema\n\n"
