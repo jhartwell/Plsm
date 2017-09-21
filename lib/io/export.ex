@@ -5,14 +5,15 @@ defmodule Plsm.IO.Export do
       Generate the schema field based on the database type
     """
     def type_output (field) do
-        case field do
-            {name, type} when type == :integer -> four_space "field :#{name}, :integer\n"
-            {name, type} when type == :decimal -> four_space "field :#{name}, :decimal\n"
-            {name, type} when type == :float -> four_space  "field :#{name}, :float\n"
-            {name, type} when type == :string -> four_space "field :#{name}, :string\n"
-            {name,type} when type == :date -> four_space "field :#{name}, Ecto.DateTime\n"
-            _ -> ""
-        end
+      case field do
+        {"id", _} -> ""
+        {name, :integer} -> four_space "field :#{name}, :integer\n"
+        {name, :decimal} -> four_space "field :#{name}, :decimal\n"
+        {name, :float} -> four_space  "field :#{name}, :float\n"
+        {name, :string} -> four_space "field :#{name}, :string\n"
+        {name,:date} -> four_space "field :#{name}, Ecto.DateTime\n"
+        _ -> ""
+      end
     end
 
   @doc """
@@ -50,8 +51,10 @@ defmodule Plsm.IO.Export do
 
   @spec primary_key_declaration([Plsm.Database.Column]) :: String.t
   defp primary_key_declaration(columns) do
-    Enum.reduce(columns, "", fn(x,acc) -> case x.primary_key do 
-        true -> acc <> two_space "@primary_key {:#{x.name}, :#{x.type}, []}\n"
+    Enum.reduce(columns, "", fn(x,acc) -> 
+      case {x.primary_key, x.name} do 
+        {true, "id"} -> acc
+        {true, _} -> acc <> two_space "@primary_key {:#{x.name}, :#{x.type}, []}\n"
         _ -> acc
        end
     end)
@@ -91,7 +94,12 @@ defmodule Plsm.IO.Export do
   end
 
   defp changeset_list(columns) do
-    changelist = Enum.reduce(columns,"", fn(x,acc) -> acc <> ":#{x.name}, " end)
+    changelist = Enum.reduce(columns,"", fn(x,acc) -> 
+      case x.name do
+        "id" -> acc
+        name -> acc <> ":#{name}, " 
+      end
+    end)
     String.slice(changelist,0,String.length(changelist) - 2)
   end
 
