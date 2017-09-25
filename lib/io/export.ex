@@ -1,19 +1,17 @@
 defmodule Plsm.IO.Export do
-   
 
     @doc """
       Generate the schema field based on the database type
     """
     def type_output (field) do
-      case field do
-        {"id", _} -> ""
-        {name, :integer} -> four_space "field :#{name}, :integer\n"
-        {name, :decimal} -> four_space "field :#{name}, :decimal\n"
-        {name, :float} -> four_space  "field :#{name}, :float\n"
-        {name, :string} -> four_space "field :#{name}, :string\n"
-        {name,:date} -> four_space "field :#{name}, Ecto.DateTime\n"
-        _ -> ""
-      end
+        case field do
+            {name, type} when type == :integer -> four_space "field :#{name}, :integer\n"
+            {name, type} when type == :decimal -> four_space "field :#{name}, :decimal\n"
+            {name, type} when type == :float -> four_space  "field :#{name}, :float\n"
+            {name, type} when type == :string -> four_space "field :#{name}, :string\n"
+            {name,type} when type == :date -> four_space "field :#{name}, Ecto.DateTime\n"
+            _ -> ""
+        end
     end
 
   @doc """
@@ -51,20 +49,18 @@ defmodule Plsm.IO.Export do
 
   @spec primary_key_declaration([Plsm.Database.Column]) :: String.t
   defp primary_key_declaration(columns) do
-    Enum.reduce(columns, "", fn(x,acc) -> 
-      case {x.primary_key, x.name} do 
-        {true, "id"} -> acc
-        {true, _} -> acc <> two_space "@primary_key {:#{x.name}, :#{x.type}, []}\n"
-        _ -> acc
-       end
-    end)
+    Enum.reduce(columns, "", fn(x,acc) -> acc <> create_primary_key(x)  end)
   end
+  
+  @spec create_primary_key(Plsm.Database.Column) :: String.t
+  defp create_primary_key(%Plsm.Database.Column{primary_key: true, name: "id"}), do: ""
+  defp create_primary_key(%Plsm.Database.Column{primary_key: true, name: name, type: type}), do: "@primary_key {:#{name}, :#{type}, []}\n" 
+  defp create_primary_key(_), do: ""
 
   defp module_declaration(project_name, table_name) do
-      namespace = Plsm.Database.TableHeader.table_name(table_name)
-      "defmodule #{project_name}.#{namespace} do\n"
+    namespace = Plsm.Database.TableHeader.table_name(table_name)
+    "defmodule #{project_name}.#{namespace} do\n"
   end
-
 
   defp model_inclusion do
     two_space "use Ecto.Schema\n\n"
@@ -94,12 +90,7 @@ defmodule Plsm.IO.Export do
   end
 
   defp changeset_list(columns) do
-    changelist = Enum.reduce(columns,"", fn(x,acc) -> 
-      case x.name do
-        "id" -> acc
-        name -> acc <> ":#{name}, " 
-      end
-    end)
+    changelist = Enum.reduce(columns,"", fn(x,acc) -> acc <> ":#{x.name}, " end)
     String.slice(changelist,0,String.length(changelist) - 2)
   end
 
