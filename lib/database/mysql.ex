@@ -44,17 +44,45 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
 
   @spec get_columns(Plsm.Database.MySql, Plsm.Database.Table) :: [Plsm.Database.Column]
   def get_columns(db, table) do
-    {_,result} = Mariaex.query(db.connection, "show columns from #{table.name}")
+    {_,result} = Mariaex.query(db.connection, "
+      SELECT DISTINCT
+        isc.COLUMN_NAME as column_name,
+        MAX(isc.DATA_TYPE) as data_type,
+        IF(MAX(isc.COLUMN_KEY)='PRI', 'TRUE', 'FALSE') as primary_key,
+        COALESCE(MAX(REFERENCED_TABLE_NAME), '') as foreign_table,
+        COALESCE(MAX(REFERENCED_COLUMN_NAME), '') as foreigh_field,
+        MAX(isc.ORDINAL_POSITION) as num
+      FROM INFORMATION_SCHEMA.COLUMNS isc
+      LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+      ON
+          isc.TABLE_NAME=kcu.TABLE_NAME
+          AND isc.TABLE_SCHEMA = kcu.CONSTRAINT_SCHEMA
+          AND isc.COLUMN_NAME = kcu.COLUMN_NAME
+      WHERE
+          isc.`TABLE_SCHEMA` ='#{db.database_name}'
+          AND isc.`TABLE_NAME` = '#{table.name}'
+      GROUP BY ISC.COLUMN_NAME
+      ORDER BY MAX(isc.ORDINAL_POSITION)
+    ")
+    IO.inspect result.rows
     result.rows
       |> Enum.map(&to_column/1)
   end
 
   defp to_column(row) do
-    {_,name} = Enum.fetch(row,0)
-    type = Enum.fetch(row,1) |> get_type
-    {_, pk} = Enum.fetch(row,3)
-    primary_key? = pk == "PRI"
-    %Plsm.Database.Column {name: name, type: type, primary_key: primary_key?}
+    {_,name} = Enum.fetch(row, 0)
+    type = Enum.fetch(row, 1) |> get_type
+    {_, foreign_table} = Enum.fetch(row, 3)
+    {_, foreign_field} = Enum.fetch(row, 4)
+    {_, is_pk} = Enum.fetch(row, 2)
+
+    %Plsm.Database.Column{
+      name: name,
+      type: type,
+      primary_key: is_pk,
+      foreign_table: foreign_table,
+      foreign_field: foreign_field
+    }
   end
 
   defp get_type(start_type) do
