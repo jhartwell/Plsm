@@ -130,8 +130,4 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
         true -> :none
     end
   end
-
-  defp get_schema_table(table_name) do
-    %Plsm.Database.Table{header: header, columns: columns}
-  end
 end

@@ -8,18 +8,14 @@ defmodule Mix.Tasks.Plsm do
         
         configs = Plsm.Common.Configs.load_configs()
 
-        tableHeaders = configs
-                |> Plsm.Database.Common.create
-                |> Plsm.Database.connect
-                |> Plsm.Database.get_tables
-
-        for header <- tableHeaders do
-            columns = Plsm.Database.get_columns(header.database, header)
-            table = %Plsm.Database.Table {header: header, columns: columns}
-
-            Plsm.IO.Export.prepare(table, configs.project.name)
-            |> Plsm.IO.Export.write(header.name, configs.project.destination)
-        end
+        configs
+        |> Plsm.Database.Common.create
+        |> Plsm.Database.connect
+        |> Plsm.Database.get_tables
+        |> Enum.map(fn x -> {x, Plsm.Database.get_columns(x.database, x)} end)
+        |> Enum.map(fn {header, columns} -> %Plsm.Database.Table {header: header, columns: columns} end)
+        |> Enum.map(fn table -> Plsm.IO.Export.prepare(table, configs.project.name) end)
+        |> Enum.map(fn header -> Plsm.IO.Export.write(header.name, configs.project.destination) end)
     end
 end
 
@@ -58,7 +54,6 @@ end
 
 defmodule Mix.Tasks.Plasm do
     use Mix.Task
-
     def run(_) do
         Mix.Tasks.Plsm.run nil
     end
