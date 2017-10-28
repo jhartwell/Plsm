@@ -61,9 +61,12 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
     {_,type} = start_type
     upcase = String.upcase type
     cond do 
-      String.starts_with?(upcase, "INT") == true -> :integer
-      String.starts_with?(upcase, "BIGINT") == true -> :integer
-      String.starts_with?(upcase, "TINYINT") == true -> :integer
+      String.contains?(upcase, "INT") == true -> :integer
+      #String.starts_with?(upcase, "INT") == true -> :integer
+      #String.starts_with?(upcase, "BIGINT") == true -> :integer
+      #String.starts_with?(upcase, "MEDIUMINT") == true -> :integer
+      #String.starts_with?(upcase, "SMALLINT") == true -> :integer
+      #String.starts_with?(upcase, "TINYINT") == true -> :integer
       String.starts_with?(upcase, "BIT") == true -> :integer
       String.contains?(upcase, "CHAR") == true -> :string
       String.starts_with?(upcase, "TEXT") == true -> :string
