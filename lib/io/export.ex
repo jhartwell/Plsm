@@ -9,7 +9,6 @@ defmodule Plsm.IO.Export do
             {name, type} when type == :decimal -> four_space "field :#{name}, :decimal\n"
             {name, type} when type == :float -> four_space  "field :#{name}, :float\n"
             {name, type} when type == :string -> four_space "field :#{name}, :string\n"
-            {name, type} when type == :text -> four_space "field: #{name}, :text\n"
             {name,type} when type == :date -> four_space "field :#{name}, Ecto.DateTime\n"
             _ -> ""
         end
