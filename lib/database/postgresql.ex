@@ -116,8 +116,8 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
         String.starts_with?(upcase, "INTEGER") == true -> :integer
         String.starts_with?(upcase, "INT") == true -> :integer
         String.starts_with?(upcase, "BIGINT") == true -> :integer
-        String.contains?(upcase, "CHAR") == true -> :string
-        String.starts_with?(upcase, "TEXT") == true -> :string
+        String.contains?(upcase, "CHAR") == true -> :text
+        String.starts_with?(upcase, "TEXT") == true -> :text
         String.starts_with?(upcase, "FLOAT") == true -> :float
         String.starts_with?(upcase, "DOUBLE") == true -> :float
         String.starts_with?(upcase, "DECIMAL") == true -> :decimal
@@ -129,9 +129,5 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
         String.starts_with?(upcase, "BOOLEAN") == true -> :boolean
         true -> :none
     end
-  end
-
-  defp get_schema_table(table_name) do
-    %Plsm.Database.Table{header: header, columns: columns}
   end
 end
