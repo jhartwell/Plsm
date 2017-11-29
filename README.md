@@ -44,6 +44,6 @@ to deps in your mix.exs and that will download the package for you
   * MySQL
   * PostgreSQL
 
- We may add support to other databases based on demand. Please reach out and if you want a specific database supported. Please feel free to contribute commits that add different database vendor support!
+ We are planning to add support to other databases but that has not been implemented yet. Please feel free to contribute commits that add different database vendor support!
 
 If you have any questions you can reach me via email at jon@dontbreakthebuild.com

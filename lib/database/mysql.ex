@@ -59,21 +59,20 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
 
   defp get_type(start_type) do
     {_,type} = start_type
-    downcase = String.downcase type
+    upcase = String.upcase type
     cond do 
-      String.starts_with?(downcase, "int") -> :integer
-      String.starts_with?(downcase, "bigint") -> :integer
-      String.starts_with?(downcase, "tinyint(1)") -> :boolean
-      String.starts_with?(downcase, "tinyint") -> :integer
-      String.starts_with?(downcase, "bit") -> :integer
-      String.contains?(downcase, "char") -> :text
-      String.starts_with?(downcase, "text") -> :string
-      String.starts_with?(downcase, "float") -> :float
-      String.starts_with?(downcase, "double") -> :float
-      String.starts_with?(downcase, "decimal") -> :decimal
-      String.starts_with?(downcase, "date") -> :date
-      String.starts_with?(downcase, "datetime") -> :date
-      String.starts_with?(downcase, "timestamp") -> :date
+      String.starts_with?(upcase, "INT") == true -> :integer
+      String.starts_with?(upcase, "BIGINT") == true -> :integer
+      String.starts_with?(upcase, "TINYINT") == true -> :integer
+      String.starts_with?(upcase, "BIT") == true -> :integer
+      String.contains?(upcase, "CHAR") == true -> :string
+      String.starts_with?(upcase, "TEXT") == true -> :string
+      String.starts_with?(upcase, "FLOAT") == true -> :float
+      String.starts_with?(upcase, "DOUBLE") == true -> :float
+      String.starts_with?(upcase, "DECIMAL") == true -> :decimal
+      String.starts_with?(upcase, "DATE") == true -> :date
+      String.starts_with?(upcase, "DATETIME") == true -> :date
+      String.starts_with?(upcase, "TIMESTAMP") == true -> :date
       true -> :none
     end
   end

@@ -6,7 +6,8 @@ defmodule Plsm.Config.Config do
         _ -> true
       end
     end
-    
+
+    @spec write(String.t) :: ()
     def write(file_name) do
       case File.open(file_name, [:append]) do
          {:ok, file} -> IO.binwrite(file, output_config())
