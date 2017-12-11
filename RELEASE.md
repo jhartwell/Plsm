@@ -1,3 +1,16 @@
+## Changes in 2.2.0
+
+## Feature
+
+* Removed Ecto.DateTime from the type output and replaced it with naive_datetime
+* For MySql, tinyint(1) now maps to boolean type rather than an integer
+* Changed MySql and PostgresSQL to use :text rather than :string in order to accomodate char values that are longer than 255 characters
+
+## Other Changes
+
+* Updated the required version of Elixir from 1.3 to 1.5
+* Started using Travis CI
+
 ## Changes in 2.0.1
 
 ## Bugfixes
