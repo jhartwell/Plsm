@@ -15,7 +15,7 @@ defmodule Mix.Tasks.Plsm do
         |> Enum.map(fn x -> {x, Plsm.Database.get_columns(x.database, x)} end)
         |> Enum.map(fn {header, columns} -> %Plsm.Database.Table {header: header, columns: columns} end)
         |> Enum.map(fn table -> Plsm.IO.Export.prepare(table, configs.project.name) end)
-        |> Enum.map(fn header -> Plsm.IO.Export.write(header.name, configs.project.destination) end)
+        |> Enum.map(fn {header, output} -> Plsm.IO.Export.write(output, header.name, configs.project.destination) end)
     end
 end
 
