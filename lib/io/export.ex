@@ -21,7 +21,7 @@ defmodule Plsm.IO.Export do
   @spec write(String.t, String.t, String.t) :: Any
   def write(schema, name, path \\ "") do
     case File.open "#{path}#{name}.ex", [:write] do
-      {:ok, file} -> IO.binwrite file, schema
+      {:ok, file} -> IO.puts "#{path}#{name}.ex"; IO.binwrite file, schema
       {_, msg} -> IO.puts "Could not write #{name} to file: #{msg}"
     end
   end
@@ -29,7 +29,7 @@ defmodule Plsm.IO.Export do
   @doc """
   Format the text of a specific table with the fields that are passed in. This is strictly formatting and will not verify the fields with the database
   """
-  @spec prepare(Plsm.Database.Table, String.t) :: String.t
+  @spec prepare(Plsm.Database.Table, String.t) :: {Plsm.Database.TableHeader, String.t}
   def prepare(table, project_name) do
       output = module_declaration(project_name,table.header.name) <> model_inclusion() <> primary_key_declaration(table.columns) <> schema_declaration(table.header.name)
       trimmed_columns = remove_foreign_keys(table.columns)
@@ -44,8 +44,9 @@ defmodule Plsm.IO.Export do
       output = output <> belongs_to_output <> "\n"
 
       output = output <> two_space(end_declaration())
-      output = output <> changeset(table.columns)
+      output = output <> changeset(table.columns) <> end_declaration()
       output <> end_declaration()
+      {table.header, output}
   end
 
   @spec primary_key_declaration([Plsm.Database.Column]) :: String.t

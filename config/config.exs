@@ -38,7 +38,7 @@ use Mix.Config
  #    * database_name -> the name of the database that you are connecting to. This is required.
  #    * username -> The username that is used to connect. Make sure that there is sufficient privelages to be able to connect, query tables as well as query information schemas on the database. The schema information is used to find the index/keys on each table
  #    * password -> This is necessary as there is no default nor is there any handling of a blank password currently.
- #    * type -> This dictates which database vendor you are using. We currently support PostgreSQL and MySQL. If no value is entered then it will default to MySQL. Do note that this is an atom and not a string
+ #    * type -> This dictates which database vendor you are using. We currently support PostgreSQL and MySQL. If no value is entered then it will default to MySQL. Accepted values: :mysql or :postgres. Do note that this is an atom and not a string
 
 
 config :plsm,
