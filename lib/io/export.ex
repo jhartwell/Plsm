@@ -44,7 +44,7 @@ defmodule Plsm.IO.Export do
       output = output <> belongs_to_output <> "\n"
 
       output = output <> two_space(end_declaration())
-      output = output <> changeset(table.columns)
+      output = output <> changeset(table.columns) <> end_declaration()
       output <> end_declaration()
       {table.header, output}
   end
