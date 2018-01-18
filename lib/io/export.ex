@@ -10,7 +10,7 @@ defmodule Plsm.IO.Export do
             {name, type} when type == :float -> four_space  "field :#{name}, :float\n"
             {name, type} when type == :string -> four_space "field :#{name}, :string\n"
             {name, type} when type == :text -> four_space "field :#{name}, :text\n"
-            {name,type} when type == :date -> four_space "field :#{name}, :naive_datetime\n"
+            {name, type} when type == :date -> four_space "field :#{name}, :naive_datetime\n"
             _ -> ""
         end
     end
@@ -36,7 +36,7 @@ defmodule Plsm.IO.Export do
       column_output = trimmed_columns |> Enum.reduce("",fn(x,a) -> a <> type_output({x.name, x.type}) end)
       output = output <> column_output
       belongs_to_output = Enum.filter(table.columns, fn(column) ->
-        column.foreign_table != nil and column.foreign_table != nil
+        column.foreign_table != nil and column.foreign_table != nil and column.primary_key == false
       end)
       |> Enum.reduce("",fn(column, a) ->
         a <> belongs_to_output(project_name, column)
@@ -56,7 +56,7 @@ defmodule Plsm.IO.Export do
   
   @spec create_primary_key(Plsm.Database.Column) :: String.t
   defp create_primary_key(%Plsm.Database.Column{primary_key: true, name: "id"}), do: ""
-  defp create_primary_key(%Plsm.Database.Column{primary_key: true, name: name, type: type}), do: "@primary_key {:#{name}, :#{type}, []}\n" 
+  defp create_primary_key(%Plsm.Database.Column{primary_key: true, name: name, type: type}), do: two_space("@primary_key {:#{name}, :#{type}, []}\n") 
   defp create_primary_key(_), do: ""
 
   defp module_declaration(project_name, table_name) do
@@ -65,7 +65,7 @@ defmodule Plsm.IO.Export do
   end
 
   defp model_inclusion do
-    two_space "use Ecto.Schema\n\n"
+    two_space("use Ecto.Schema\n") <> two_space("import Ecto\n") <> two_space("import Ecto.Changeset\n") <> two_space("import Ecto.Query\n\n")
   end
 
   defp schema_declaration(table_name) do
@@ -73,7 +73,7 @@ defmodule Plsm.IO.Export do
   end
 
   defp end_declaration do
-    "end\n"
+    "end\n\n"
   end
 
   defp four_space(text) do
@@ -87,7 +87,7 @@ defmodule Plsm.IO.Export do
   defp changeset(columns) do
     output = two_space "def changeset(struct, params \\\\ %{}) do\n"
     output = output <> four_space "struct\n"
-    output = output <> four_space "|> cast(params, " <> changeset_list(columns) <> ")\n"
+    output = output <> four_space "  |> cast(params, [" <> changeset_list(columns) <> "])\n"
     output <> two_space "end\n"
   end
 
