@@ -10,9 +10,14 @@ defmodule Plsm.Database.TableHeader do
   defstruct name: String, database: nil
 
   def table_name(table_name) do
-    table_name
-    |> String.split("_")
-    |> Enum.map(fn x -> String.capitalize x end)
-    |> Enum.reduce(fn x, acc -> acc <> x end)
+    cond do
+      String.match?(table_name, ~r/[A-Z]+/) -> 
+        table_name
+      true ->  
+        table_name
+          |> String.split("_")
+          |> Enum.map(fn x -> String.capitalize x end)
+          |> Enum.reduce(fn x, acc -> acc <> x end)
+    end
   end
 end
