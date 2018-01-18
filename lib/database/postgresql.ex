@@ -116,7 +116,7 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
         String.starts_with?(upcase, "INTEGER") == true -> :integer
         String.starts_with?(upcase, "INT") == true -> :integer
         String.starts_with?(upcase, "BIGINT") == true -> :integer
-        String.contains?(upcase, "CHAR") == true -> :text
+        String.contains?(upcase, "CHAR") == true -> :string
         String.starts_with?(upcase, "TEXT") == true -> :text
         String.starts_with?(upcase, "FLOAT") == true -> :float
         String.starts_with?(upcase, "DOUBLE") == true -> :float
@@ -127,6 +127,7 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
         String.starts_with?(upcase, "DATETIME") == true -> :date
         String.starts_with?(upcase, "TIMESTAMP") == true -> :date
         String.starts_with?(upcase, "BOOLEAN") == true -> :boolean
+        String.starts_with?(upcase, "UUID") == true -> :binary_id
         true -> :none
     end
   end
