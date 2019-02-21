@@ -1,14 +1,16 @@
 defmodule Plsm.IO.Export do
+  # TODO: Break this up into submodules for schemas vs. migrations. (EQW 22 Feb 2019)
   @doc """
     Generate the schema field based on the database type
   """
   def type_output(field) do
     case field do
+      {name, type} when type == :bigint -> four_space("field :#{name}, :integer\n")
       {name, type} when type == :integer -> four_space("field :#{name}, :integer\n")
       {name, type} when type == :decimal -> four_space("field :#{name}, :decimal\n")
       {name, type} when type == :float -> four_space("field :#{name}, :float\n")
       {name, type} when type == :string -> four_space("field :#{name}, :string\n")
-      {name, type} when type == :text -> four_space("field :#{name}, :text\n")
+      {name, type} when type == :text -> four_space("field :#{name}, :string\n")
       {name, type} when type == :date -> four_space("field :#{name}, :naive_datetime\n")
       _ -> ""
     end

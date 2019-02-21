@@ -9,7 +9,7 @@ end
 
 defimpl Plsm.Database, for: Plsm.Database.MySql do
   @doc """
-    Create a MySql database struct for use in connecting to the MySql database. We pass in the configs in order to 
+    Create a MySql database struct for use in connecting to the MySql database. We pass in the configs in order to
     properly connect
   """
   @spec create(Plsm.Database.MySql, Plsm.Configs) :: Plsm.Database.MySql
@@ -44,14 +44,37 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
     }
   end
 
-  # pass in a database and then get the tables using the mariaex query then turn the rows into a table
-  @spec get_tables(Plsm.Database.MySql) :: [Plsm.Database.TableHeader]
-  def get_tables(db) do
-    {_, result} = Mariaex.query(db.connection, "SHOW TABLES")
+  @doc """
+    Pass in a database and then get the tables using the Mariaex query, then turn the rows into a table
+  """
+  @spec get_tables(Plsm.Database.MySql, %{
+          optional(:include) => String.t(),
+          optional(:exclude) => String.t()
+        }) :: [Plsm.Database.TableHeader]
+  def get_tables(db, %{include: whitelist} = _table_filters) do
+    whitelist
+    |> Enum.map(fn table_name ->
+      %Plsm.Database.TableHeader{database: db, name: table_name}
+    end)
+  end
 
-    result.rows
-    |> List.flatten()
-    |> Enum.map(fn x -> %Plsm.Database.TableHeader{database: db, name: x} end)
+  def get_tables(db, %{exclude: blacklist} = _table_filters) do
+    Mariaex.query!(
+      db.connection,
+      "SELECT table_name FROM information_schema.tables WHERE table_name NOT IN ($1);",
+      Plsm.Database.Common.list_to_sql(blacklist)
+    )
+    |> handle_table_results(db)
+  end
+
+  def get_tables(db, _empty_filters) do
+    Mariaex.query!(db.connection, "SHOW TABLES")
+    |> handle_table_results(db)
+  end
+
+  def get_tables(db) do
+    Mariaex.query!(db.connection, "SHOW TABLES")
+    |> handle_table_results(db)
   end
 
   @spec get_columns(Plsm.Database.MySql, Plsm.Database.Table) :: [Plsm.Database.Column]
@@ -60,6 +83,16 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
 
     result.rows
     |> Enum.map(&to_column/1)
+  end
+
+  @spec handle_table_results(Mariaex.Result, String.t()) :: [Plsm.Database.Table]
+  defp handle_table_results(result, db) do
+    result
+    |> Map.get(:rows)
+    |> List.flatten()
+    |> Enum.map(fn table_name ->
+      %Plsm.Database.TableHeader{database: db, name: table_name}
+    end)
   end
 
   defp to_column(row) do

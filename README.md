@@ -1,50 +1,75 @@
-# Plsm (Formerly Plasm)- Ecto model generation
+# Plsm
 
-Plsm generates Ecto models based on existing database tables in your database. Currently, Ecto only allows the ability to create migrations that creates new tables/schemas. If you have an existing project that you want to add Ecto support for you would have to hand code the models. This can be tedious for tables that have many columns. 
+*Instant Ecto Schemas from your database definitions*
 
-## Getting Plsm
+If you have an existing project for which you want to add Ecto support, transcribing your database definitions into the necessary Ecto files can be tedious, especially for tables with many columns.
 
-You can add 
+Plsm provides a generator mix task to scaffold these files for you.
 
-`{:plsm, "~> 2.2.0"}`
+**Note:** Currently only Postgres and MySQL are supported
 
-to deps in your mix.exs and that will download the package for you
+### Installation
 
+The package can be installed by adding `plsm` to your list of dependencies in your `mix.exs`, and running `mix deps.get`
 
-## Running Plsm
+```elixir
+def deps do
+  [
+  # ...
+    {:plsm, "~> 2.2.0"},
+  # ...
+  ]
+end
+```
 
-First, in order to run plsm, you need to generate a config file. You do this by running
+### Running Plsm
+
+In order to run plsm, first generate a config file (if you are using Phoenix, it is recommended to to pass in your `config/dev.exs`, as Plsm is a dev-only process):
 
 `mix plsm.config --config-file <name>`
 
-This will create a skeleton config file to the given config file. If you don't specify a config.exs file the config will then be appended to the "config/config.exs" file. If you are using another structure, such as Phoenix, then you need to pass in your dev.exs, since this is a dev only process. You will need to make changes to the generated Plsm configs in the config file in order to allow Plsm to function correctly.
 
-Once you have your config file generated then you are ready to run plsm. You do this by running 
-
-`mix plsm`
-
-You are able to change the location of the model file output in the configuration file
+This will create a skeleton config in `<name>`. If none is specified, the config is appended to your `config/config.exs`.
 
 
-## Configuration Options
-
-  * module_name -> This is the name of the module that the models will be placed under
-  * destination -> The output location for the generated models. If this is not provided then the models will go in the directory that you ran plsm in
-  * server -> this is the name of the server that you are connecting to. It can be a DNS name or an IP Address. This needs to be filled in as there are no defaults
-  * port -> The port that the database server is listening on. This needs to be provided as there may not be a default for your server
-  * database_name -> the name of the database that you are connecting to. This is required.
-  * username -> The username that is used to connect. Make sure that there is sufficient privelages to be able to connect, query tables as well as query information schemas on the database. The schema information is used to find the index/keys on each table
-  * password -> This is necessary as there is no default nor is there any handling of a blank password currently.
-  * type -> This dictates which database vendor you are using. We currently support PostgreSQL and MySQL. If no value is entered then it will default to MySQL. Accepted values: `:mysql` or `:postgres`. **Do note that this is an atom and not a string**
+You will also need to make changes to the generated Plsm configs in the config file in order to allow Plsm to function correctly.
 
 
-## Supported Databases
-  
-  We currently support the following databases:
+#### Options
 
-  * MySQL
-  * PostgreSQL
+You can blacklist or whitelist database tables using the `:tables_filters` option in your config.
 
- We may add support to other databases based on demand. Please reach out and if you want a specific database supported. Please feel free to contribute commits that add different database vendor support!
+Add a map whose a key is either `exclude` or `include`, and whose value points to a plaintext file with newline seperated table names. The filename will default to the root of your git directory.
+
+```elixir
+config :plsm,
+# ...
+  table_filters: %{exclude: "blacklist.txt"},
+# ...
+```
+
+Note if both are included, `plsm` will default to the include.
+
+
+### Configuration Options
+
+  - `module_name`:  The name of the module under which the schemas will be namespaced
+  - `destination`: The output location for the generated schemas. (Defaults to the directory in which you invoked `mix plsm`)
+  - `server`: The desired DB server that you are connecting to. Defaults to `localhost`.
+  - `port`: The port that the database server is listening on. This needs to be provided as there may not be a default for your server
+  - `database_name`: The name of the database that you are connecting to.  Defaults to `postgres`.
+  - `username`: The username that is used to connect. You must ensure the user has sufficient privileges to connect, query tables, and query information schemas on the database, or `plsm` will fail.
+  - `password`: Name of your database password. Defaults to `postgres`.
+  - `type`: The type of database being used; defaults to `postgres`
+
+
+### Supported Databases
+
+Currently only the following databases are supported:
+
+  - MySQL (5.x)
+  - PostgreSQL
+
+If you desire broader DB support, please open a GitHub issue. You are also encouraged to contribute!
 
 If you have any questions you can reach me via email at jon@dontbreakthebuild.com

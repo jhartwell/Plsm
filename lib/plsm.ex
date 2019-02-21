@@ -5,12 +5,12 @@ defmodule Mix.Tasks.Plsm do
     # ensure all dependencies are started manually.
     {:ok, _started} = Application.ensure_all_started(:postgrex)
 
-    configs = Plsm.Common.Configs.load_configs()
+    configs = Plsm.Common.Configs.load()
 
     configs
     |> Plsm.Database.Common.create()
     |> Plsm.Database.connect()
-    |> Plsm.Database.get_tables()
+    |> Plsm.Database.get_tables(configs.project.table_filters)
     |> Enum.map(fn x -> {x, Plsm.Database.get_columns(x.database, x)} end)
     |> Enum.map(fn {header, columns} -> %Plsm.Database.Table{header: header, columns: columns} end)
     |> Enum.map(fn table -> Plsm.IO.Export.prepare(table, configs.project.name) end)

@@ -15,6 +15,11 @@ defprotocol Plsm.Database do
   def get_tables(db)
 
   @doc """
+    Get all of the tables that are in the database _and_ in the table_filters
+  """
+  def get_tables(db, table_filters)
+
+  @doc """
     Get the columns for the table that is passed in
   """
   def get_columns(db, table)

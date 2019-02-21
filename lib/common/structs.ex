@@ -7,5 +7,5 @@ defmodule Plsm.Configs.Database do
 end
 
 defmodule Plsm.Configs.Project do
-  defstruct name: "", destination: ""
+  defstruct name: "", destination: "", table_filters: %{}
 end

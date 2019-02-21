@@ -40,19 +40,46 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
     }
   end
 
-  # pass in a database and then get the tables using the Postgrex query then turn the rows into a table
-  @spec get_tables(Plsm.Database.PostgreSQL) :: [Plsm.Database.TableHeader]
-  def get_tables(db) do
-    {_, result} =
-      Postgrex.query(
-        db.connection,
-        "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';",
-        []
-      )
+  @doc """
+    Pass in a database and then get the tables using the Postgrex query, then turn the rows into a table
+  """
 
-    result.rows
-    |> List.flatten()
-    |> Enum.map(fn x -> %Plsm.Database.TableHeader{database: db, name: x} end)
+  @spec get_tables(Plsm.Database.PostgreSQL, %{
+          optional(:include) => String.t(),
+          optional(:exclude) => String.t()
+        }) :: [Plsm.Database.TableHeader]
+  def get_tables(db, %{include: whitelist} = _table_filters) do
+    whitelist
+    |> Enum.map(fn table_name ->
+      %Plsm.Database.TableHeader{database: db, name: table_name}
+    end)
+  end
+
+  def get_tables(db, %{exclude: blacklist} = _table_filters) do
+    Postgrex.query!(
+      db.connection,
+      "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name NOT IN ($1);",
+      Plsm.Database.Common.list_to_sql(blacklist)
+    )
+    |> handle_table_results(db)
+  end
+
+  def get_tables(db, _empty_filters) do
+    Postgrex.query!(
+      db.connection,
+      "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';",
+      []
+    )
+    |> handle_table_results(db)
+  end
+
+  def get_tables(db) do
+    Postgrex.query!(
+      db.connection,
+      "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';",
+      []
+    )
+    |> handle_table_results(db)
   end
 
   @spec get_columns(Plsm.Database.PostgreSQL, Plsm.Database.Table) :: [Plsm.Database.Column]
@@ -68,29 +95,29 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
          FROM pg_attribute a
          JOIN pg_class pgc ON pgc.oid = a.attrelid
          left JOIN (
-      	SELECT
-      	tc.table_name as table,
-      	kcu.column_name as field,
-      	ccu.table_name AS references_table,
-      	ccu.column_name AS references_field
-      	FROM information_schema.table_constraints tc
+        SELECT
+        tc.table_name as table,
+        kcu.column_name as field,
+        ccu.table_name AS references_table,
+        ccu.column_name AS references_field
+        FROM information_schema.table_constraints tc
 
-      	LEFT JOIN information_schema.key_column_usage kcu
-      	ON tc.constraint_catalog = kcu.constraint_catalog
-      	AND tc.constraint_schema = kcu.constraint_schema
-      	AND tc.constraint_name = kcu.constraint_name
+        LEFT JOIN information_schema.key_column_usage kcu
+        ON tc.constraint_catalog = kcu.constraint_catalog
+        AND tc.constraint_schema = kcu.constraint_schema
+        AND tc.constraint_name = kcu.constraint_name
 
-      	LEFT JOIN information_schema.referential_constraints rc
-      	ON tc.constraint_catalog = rc.constraint_catalog
-      	AND tc.constraint_schema = rc.constraint_schema
-      	AND tc.constraint_name = rc.constraint_name
+        LEFT JOIN information_schema.referential_constraints rc
+        ON tc.constraint_catalog = rc.constraint_catalog
+        AND tc.constraint_schema = rc.constraint_schema
+        AND tc.constraint_name = rc.constraint_name
 
-      	LEFT JOIN information_schema.constraint_column_usage ccu
-      	ON rc.unique_constraint_catalog = ccu.constraint_catalog
-      	AND rc.unique_constraint_schema = ccu.constraint_schema
-      	AND rc.unique_constraint_name = ccu.constraint_name
+        LEFT JOIN information_schema.constraint_column_usage ccu
+        ON rc.unique_constraint_catalog = ccu.constraint_catalog
+        AND rc.unique_constraint_schema = ccu.constraint_schema
+        AND rc.unique_constraint_name = ccu.constraint_name
 
-      	WHERE lower(tc.constraint_type) in ('foreign key')
+        WHERE lower(tc.constraint_type) in ('foreign key')
         ) as f on a.attname = f.field
         LEFT JOIN pg_index i ON
             (pgc.oid = i.indrelid AND i.indkey[0] = a.attnum)
@@ -102,6 +129,16 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
 
     result.rows
     |> Enum.map(&to_column/1)
+  end
+
+  @spec handle_table_results(Postgrex.Result, String.t()) :: [Plsm.Database.Table]
+  defp handle_table_results(result, db) do
+    result
+    |> Map.get(:rows)
+    |> List.flatten()
+    |> Enum.map(fn table_name ->
+      %Plsm.Database.TableHeader{database: db, name: table_name}
+    end)
   end
 
   defp to_column(row) do
@@ -124,6 +161,8 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
     {_, type} = start_type
     upcase = String.upcase(type)
 
+    # There are a bunch of these! We can add more as needed:
+    # https://www.postgresql.org/docs/10/datatype.html (EQW 22 Feb 2019)
     cond do
       String.starts_with?(upcase, "INTEGER") == true -> :integer
       String.starts_with?(upcase, "INT") == true -> :integer

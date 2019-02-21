@@ -19,4 +19,13 @@ defmodule Plsm.Database.Common do
         Plsm.Database.create(%Plsm.Database.MySql{}, configs)
     end
   end
+
+  @spec list_to_sql([String.t()]) :: [String.t()]
+  def list_to_sql(table_names) do
+    table_names
+    |> Enum.map(&String.replace(&1, ~r/\W+/, "", global: true))
+    |> Enum.map(&"'#{&1}'")
+    |> Enum.join(",")
+    |> List.wrap()
+  end
 end

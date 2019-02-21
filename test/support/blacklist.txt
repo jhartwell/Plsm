@@ -1,0 +1,4 @@
+test_blacklisted_table_name_1
+test_blacklisted_table_name_2
+test_blacklisted_table_name_3
+test_blacklisted_table_name_4
