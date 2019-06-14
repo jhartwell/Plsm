@@ -19,8 +19,8 @@ defmodule Plsm.Mixfile do
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:mariaex, "~> 0.8.0"},
-      {:postgrex, "~> 0.13.0"},
+      {:mariaex, "~> 0.9.1"},
+      {:postgrex, "~> 0.14.3"},
       {:mock, "~> 0.2.0", only: :test}
     ]
   end
