@@ -4,7 +4,7 @@ defmodule Plsm.Mixfile do
   def project do
     [app: :plsm,
      version: "2.3.0",
-     elixir: "~> 1.5",
+     elixir: "~> 1.7",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      description: description(),
@@ -18,7 +18,7 @@ defmodule Plsm.Mixfile do
 
   defp deps do
     [
-      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:ex_doc, "~> 0.21.0", only: :dev},
       {:mariaex, "~> 0.9.1"},
       {:postgrex, "~> 0.14.3"},
       {:mock, "~> 0.2.0", only: :test}
