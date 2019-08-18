@@ -3,7 +3,7 @@ defmodule Plsm.Mixfile do
 
   def project do
     [app: :plsm,
-     version: "2.2.1",
+     version: "2.3.0",
      elixir: "~> 1.5",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
