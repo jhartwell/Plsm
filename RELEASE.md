@@ -1,3 +1,15 @@
+## Changes in 2.3.1
+
+## Bug fix
+
+* Fix casting calls in the generated schema files
+
+## Changes in 2.3.0
+
+## Update
+
+* Updated database dependencies to work with the latest version of Phoenix
+
 ## Changes in 2.2.0
 
 ## Feature

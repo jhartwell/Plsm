@@ -6,7 +6,7 @@ Plsm generates Ecto models based on existing database tables in your database. C
 
 You can add 
 
-`{:plsm, "~> 2.2.0"}`
+`{:plsm, "~> 2.3.1"}`
 
 to deps in your mix.exs and that will download the package for you
 
