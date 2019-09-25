@@ -26,7 +26,7 @@ defmodule Plsm.IO.Export do
       {_, msg} -> IO.puts "Could not write #{name} to file: #{msg}"
     end
   end
-    
+
   @doc """
   Format the text of a specific table with the fields that are passed in. This is strictly formatting and will not verify the fields with the database
   """
@@ -54,10 +54,10 @@ defmodule Plsm.IO.Export do
   defp primary_key_declaration(columns) do
     Enum.reduce(columns, "", fn(x,acc) -> acc <> create_primary_key(x)  end)
   end
-  
+
   @spec create_primary_key(Plsm.Database.Column) :: String.t
   defp create_primary_key(%Plsm.Database.Column{primary_key: true, name: "id"}), do: ""
-  defp create_primary_key(%Plsm.Database.Column{primary_key: true, name: name, type: type}), do: "@primary_key {:#{name}, :#{type}, []}\n" 
+  defp create_primary_key(%Plsm.Database.Column{primary_key: true, name: name, type: type}), do: "@primary_key {:#{name}, :#{type}, []}\n"
   defp create_primary_key(_), do: ""
 
   defp module_declaration(project_name, table_name) do
@@ -66,7 +66,7 @@ defmodule Plsm.IO.Export do
   end
 
   defp model_inclusion do
-    two_space "use Ecto.Schema\n\n"
+    two_space "use Ecto.Schema\n" <> two_space "import Ecto.Changeset\n\n"
   end
 
   defp schema_declaration(table_name) do
@@ -88,13 +88,14 @@ defmodule Plsm.IO.Export do
   defp changeset(columns) do
     output = two_space "def changeset(struct, params \\\\ %{}) do\n"
     output = output <> four_space "struct\n"
-    output = output <> four_space "|> cast(params, " <> changeset_list(columns) <> ")\n"
+    output = output <> four_space "|> cast(params, [" <> changeset_list(columns) <> "])\n"
     output <> two_space "end\n"
   end
 
   defp changeset_list(columns) do
-    changelist = Enum.reduce(columns,"", fn(x,acc) -> acc <> ":#{x.name}, " end)
-    String.slice(changelist,0,String.length(changelist) - 2)
+    columns
+    |> Enum.map(fn c -> ":#{c.name}" end)
+    |> Enum.join(", ")
   end
 
   @spec prepare(String.t, Plsm.Database.Column) :: String.t
