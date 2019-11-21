@@ -1,3 +1,9 @@
+## Changes in 2.4.0
+
+## Enhancement
+
+* Changed :text to :string based on latest version of Ecto
+
 ## Changes in 2.3.1
 
 ## Bug fix
