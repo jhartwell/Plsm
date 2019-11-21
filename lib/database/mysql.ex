@@ -66,7 +66,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
       String.starts_with?(downcase, "tinyint(1)") -> :boolean
       String.starts_with?(downcase, "tinyint") -> :integer
       String.starts_with?(downcase, "bit") -> :integer
-      String.contains?(downcase, "char") -> :text
+      String.contains?(downcase, "char") -> :string
       String.starts_with?(downcase, "text") -> :string
       String.starts_with?(downcase, "float") -> :float
       String.starts_with?(downcase, "double") -> :float
