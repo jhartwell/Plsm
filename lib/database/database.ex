@@ -1,5 +1,4 @@
 defprotocol Plsm.Database do
-    
   @doc """
     Create a database struct that implements the Plsm.Database protocol.
   """
