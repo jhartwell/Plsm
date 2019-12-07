@@ -2,14 +2,16 @@ defmodule Plsm.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :plsm,
-     version: "2.3.1",
-     elixir: "~> 1.7",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     description: description(),
-     package: package(),
-     deps: deps()]
+    [
+      app: :plsm,
+      version: "2.3.1",
+      elixir: "~> 1.7",
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      description: description(),
+      package: package(),
+      deps: deps()
+    ]
   end
 
   def application do
@@ -33,11 +35,11 @@ defmodule Plsm.Mixfile do
 
   defp package do
     [
-     name: :plsm,
-     files: ["lib","mix.exs", "README.md", "LICENSE"],
-     maintainers: ["Jon Hartwell"],
-     licenses: ["MIT License"],
-     links: %{"GitHub" => "https://github.com/jhartwell/Plsm"}
+      name: :plsm,
+      files: ["lib", "mix.exs", "README.md", "LICENSE"],
+      maintainers: ["Jon Hartwell"],
+      licenses: ["MIT License"],
+      links: %{"GitHub" => "https://github.com/jhartwell/Plsm"}
     ]
   end
 end

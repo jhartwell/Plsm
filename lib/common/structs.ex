@@ -3,7 +3,7 @@ defmodule Plsm.Configs do
 end
 
 defmodule Plsm.Configs.Database do
-  defstruct server: "",	port: "",	database_name: "",	username: "",	password: "",	type: :mysql
+  defstruct server: "", port: "", database_name: "", username: "", password: "", type: :mysql
 end
 
 defmodule Plsm.Configs.Project do

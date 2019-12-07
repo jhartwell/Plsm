@@ -12,7 +12,7 @@ defmodule Plsm.Database.TableHeader do
   def table_name(table_name) do
     table_name
     |> String.split("_")
-    |> Enum.map(fn x -> String.capitalize x end)
+    |> Enum.map(fn x -> String.capitalize(x) end)
     |> Enum.reduce(fn x, acc -> acc <> x end)
   end
 end
