@@ -1,7 +1,8 @@
-## Changes in 2.4.0
+## Changes in 2.3.2
 
-## Enhancement
+## Bug fix
 
+* Removed `@primary_key` as a means to indicate primary key and now use `field/3`
 * Changed :text to :string based on latest version of Ecto
 
 ## Changes in 2.3.1
