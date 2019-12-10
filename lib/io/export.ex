@@ -36,6 +36,7 @@ defmodule Plsm.IO.Export do
       {:ok, file} ->
         IO.puts("#{path}#{name}.ex")
         IO.binwrite(file, schema)
+        File.close(file)
 
       {_, msg} ->
         IO.puts("Could not write #{name} to file: #{msg}")
