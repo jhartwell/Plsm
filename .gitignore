@@ -6,3 +6,5 @@ erl_crash.dump
 plasm.configs
 Plsm.configs
 .vscode
+
+lib/test_temp/schemas/*.ex

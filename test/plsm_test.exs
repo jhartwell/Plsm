@@ -15,7 +15,7 @@ defmodule PlsmTest do
       Application.put_env(:plsm, :destination, @schema_dir)
 
       File.ls!("#{@schema_dir}")
-      |> Enum.filter(!(&String.starts_with(&1, ".")))
+      |> Enum.filter(fn file -> !String.starts_with?(file, ".") end)
       |> Enum.each(fn file -> File.rm!(file) end)
 
       :ok
