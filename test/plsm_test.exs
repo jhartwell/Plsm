@@ -14,11 +14,16 @@ defmodule PlsmTest do
       Application.put_env(:plsm, :module_name, "PlsmTest")
       Application.put_env(:plsm, :destination, @schema_dir)
 
+      File.ls!("#{@schema_dir}")
+      |> Enum.each(fn file -> File.rm!(file) end)
+
       :ok
     end
 
-    test "schema files are generated" do
+    test "schema files are generated and can compile" do
       Mix.Tasks.Plsm.run([])
+
+      assert :ok == IEx.Helpers.recompile()
     end
   end
 end
