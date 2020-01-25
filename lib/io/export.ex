@@ -5,22 +5,22 @@ defmodule Plsm.IO.Export do
   def type_output(field) do
     case field do
       {name, type, is_primary_key?} when type == :decimal ->
-        four_space("field :#{name}, :decimal, :primary_key #{is_primary_key?}\n")
+        four_space("field :#{name}, :decimal, primary_key: #{is_primary_key?}\n")
 
       {name, type, is_primary_key?} when type == :float ->
-        four_space("field :#{name}, :float, :primary_key #{is_primary_key?}\n")
+        four_space("field :#{name}, :float, primary_key: #{is_primary_key?}\n")
 
       {name, type, is_primary_key?} when type == :string ->
-        four_space("field :#{name}, :string, :primary_key #{is_primary_key?}\n")
+        four_space("field :#{name}, :string, primary_key: #{is_primary_key?}\n")
 
       {name, type, is_primary_key?} when type == :text ->
-        four_space("field :#{name}, :string, :primary_key #{is_primary_key?}\n")
+        four_space("field :#{name}, :string, primary_key: #{is_primary_key?}\n")
 
       {name, type, is_primary_key?} when type == :map ->
-        four_space("field :#{name}, :map, :primary_key #{is_primary_key?}\n")
+        four_space("field :#{name}, :map, primary_key: #{is_primary_key?}\n")
 
       {name, type, is_primary_key?} when type == :date ->
-        four_space("field :#{name}, :naive_datetime, :primary_key #{is_primary_key?}\n")
+        four_space("field :#{name}, :naive_datetime, primary_key: #{is_primary_key?}\n")
 
       _ ->
         ""
