@@ -2,30 +2,32 @@ defmodule Plsm.IO.Export do
   @doc """
     Generate the schema field based on the database type
   """
-  def type_output(field) do
-    case field do
-      {name, type, is_primary_key?} when type == :decimal ->
-        four_space("field :#{name}, :decimal, primary_key: #{is_primary_key?}\n")
+  def type_output({name, type, is_primary_key?}) do
+    escaped_name = escaped_name(name)
 
-      {name, type, is_primary_key?} when type == :float ->
-        four_space("field :#{name}, :float, primary_key: #{is_primary_key?}\n")
-
-      {name, type, is_primary_key?} when type == :string ->
-        four_space("field :#{name}, :string, primary_key: #{is_primary_key?}\n")
-
-      {name, type, is_primary_key?} when type == :text ->
-        four_space("field :#{name}, :string, primary_key: #{is_primary_key?}\n")
-
-      {name, type, is_primary_key?} when type == :map ->
-        four_space("field :#{name}, :map, primary_key: #{is_primary_key?}\n")
-
-      {name, type, is_primary_key?} when type == :date ->
-        four_space("field :#{name}, :naive_datetime, primary_key: #{is_primary_key?}\n")
-
-      _ ->
-        ""
-    end
+    type_output_with_source(escaped_name, name, map_type(type), is_primary_key?)
+    |> four_space()
   end
+
+  defp map_type(:decimal), do: ":decimal"
+  defp map_type(:float), do: ":float"
+  defp map_type(:string), do: ":string"
+  defp map_type(:text), do: ":string"
+  defp map_type(:map), do: ":map"
+  defp map_type(:date), do: ":naive_datetime"
+
+  @doc """
+  When escaped name and name are the same, source option is not needed
+  """
+  defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?),
+    do: "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}\n"
+
+  @doc """
+  When escaped name and name are different, add a source option poitning to the original field name as an atom
+  """
+  defp type_output_with_source(escaped_name, name, mapped_type, is_primary_key?),
+    do:
+      "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}, source: :\"#{name}\"\n"
 
   @doc """
     Write the given schema to file.
@@ -56,7 +58,9 @@ defmodule Plsm.IO.Export do
 
     column_output =
       trimmed_columns
-      |> Enum.reduce("", fn x, a -> a <> type_output({x.name, x.type, x.primary_key}) end)
+      |> Enum.reduce("", fn column, a ->
+        a <> type_output({column.name, column.type, column.primary_key})
+      end)
 
     output = output <> column_output
 
@@ -110,7 +114,7 @@ defmodule Plsm.IO.Export do
 
   defp changeset_list(columns) do
     columns
-    |> Enum.map(fn c -> ":#{c.name}" end)
+    |> Enum.map(fn c -> ":#{escaped_name(c.name)}" end)
     |> Enum.join(", ")
   end
 
@@ -125,5 +129,10 @@ defmodule Plsm.IO.Export do
     Enum.filter(columns, fn column ->
       column.foreign_table == nil and column.foreign_field == nil
     end)
+  end
+
+  defp escaped_name(name) do
+    name
+    |> String.replace(" ", "_")
   end
 end
