@@ -56,7 +56,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
 
   @spec get_columns(Plsm.Database.MySql, Plsm.Database.Table) :: [Plsm.Database.Column]
   def get_columns(db, table) do
-    {_, result} = Mariaex.query(db.connection, "show columns from #{table.name}")
+    {_, result} = Mariaex.query(db.connection, "show columns from `#{table.name}`")
 
     result.rows
     |> Enum.map(&to_column/1)

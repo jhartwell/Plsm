@@ -2,7 +2,6 @@ defmodule Plsm.IO.Export do
   @doc """
     Generate the schema field based on the database type
   """
-
   def type_output({name, type, is_primary_key?}) do
     escaped_name = escaped_name(name)
 
