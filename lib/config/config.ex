@@ -14,7 +14,7 @@ defmodule Plsm.Config.Config do
   end
 
   defp output_config() do
-    ("\n" <> docs() <> "\n\n" <> "config :plsm")
+    ("use Mix.Config\n\n" <> docs() <> "\n\n" <> "config :plsm")
     |> append_next_item()
     |> project_config()
     |> append_next_item()
