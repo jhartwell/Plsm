@@ -15,6 +15,7 @@ defmodule Plsm.IO.Export do
   defp map_type(:text), do: ":string"
   defp map_type(:map), do: ":map"
   defp map_type(:date), do: ":naive_datetime"
+  defp map_type(:integer), do: ":integer"
 
   @doc """
   When escaped name and name are the same, source option is not needed
