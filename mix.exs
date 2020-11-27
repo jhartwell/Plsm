@@ -21,7 +21,7 @@ defmodule Plsm.Mixfile do
   defp deps do
     [
       {:ex_doc, "~> 0.21.0", only: :dev},
-      {:mariaex, "~> 0.9.1"},
+      {:myxql, "~> 0.4.4"},
       {:postgrex, "~> 0.15"},
       {:ecto_sql, "~> 3.0", only: :test},
       {:mock, "~> 0.2.0", only: :test}

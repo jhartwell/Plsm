@@ -26,7 +26,8 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
   @spec connect(Plsm.Database.MySql) :: Plsm.Database.MySql
   def connect(db) do
     {_, conn} =
-      Mariaex.start_link(
+      MyXQL.start_link(
+	protocol: :tcp,
         hostname: db.server,
         username: db.username,
         port: db.port,
@@ -47,7 +48,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
   # pass in a database and then get the tables using the mariaex query then turn the rows into a table
   @spec get_tables(Plsm.Database.MySql) :: [Plsm.Database.TableHeader]
   def get_tables(db) do
-    {_, result} = Mariaex.query(db.connection, "SHOW TABLES")
+    {_, result} = MyXQL.query(db.connection, "SHOW TABLES")
 
     result.rows
     |> List.flatten()
@@ -56,7 +57,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
 
   @spec get_columns(Plsm.Database.MySql, Plsm.Database.Table) :: [Plsm.Database.Column]
   def get_columns(db, table) do
-    {_, result} = Mariaex.query(db.connection, "show columns from `#{table.name}`")
+    {_, result} = MyXQL.query(db.connection, "show columns from `#{table.name}`")
 
     result.rows
     |> Enum.map(&to_column/1)
