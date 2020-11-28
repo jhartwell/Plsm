@@ -7,14 +7,19 @@ defmodule Plsm.Config.Config do
   end
 
   def write(file_name) do
+    config_exists? = File.exists?(file_name)
     case File.open(file_name, [:append]) do
-      {:ok, file} -> IO.binwrite(file, output_config())
+      {:ok, file} -> IO.binwrite(file, output_config(config_exists?))
       _ -> {:error, "Could not open file #{file_name}. Please ensure that it exists."}
     end
   end
 
-  defp output_config() do
-    ("use Mix.Config\n\n" <> docs() <> "\n\n" <> "config :plsm")
+  defp output_config(config_exists?) do
+    case config_exists? do
+      true -> "\n\n"
+      false -> "use Mix.Config\n\n"
+    end
+    |> config_header()
     |> append_next_item()
     |> project_config()
     |> append_next_item()
@@ -67,5 +72,9 @@ defmodule Plsm.Config.Config do
      #    * password -> This is necessary as there is no default nor is there any handling of a blank password currently.
      #    * type -> This dictates which database vendor you are using. We currently support PostgreSQL and MySQL. If no value is entered then it will default to MySQL. Do note that this is an atom and not a string
     """
+  end
+
+  defp config_header(current) do
+    current <> docs() <> "\n\nconfig :plsm"
   end
 end
