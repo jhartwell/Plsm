@@ -88,6 +88,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
       String.starts_with?(downcase, "date") -> :date
       String.starts_with?(downcase, "datetime") -> :date
       String.starts_with?(downcase, "timestamp") -> :date
+      String.starts_with?(downcase, "smallint") -> :integer
       true -> :none
     end
   end
