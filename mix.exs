@@ -42,6 +42,7 @@ defmodule Plsm.Mixfile do
       licenses: ["MIT License"],
       source_url: "https://github.com/jhartwell/Plsm",
       homepage_url: "https://github.com/jhartwell/Plsm",
+      links: %{"Github" => "https://github.com/jhartwell/Plsm"},
       docs: [main: "Plsm",
 	     extras: ["README.md"]]
     ]
