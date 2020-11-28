@@ -1,3 +1,15 @@
+## Changes in 2.4.0
+
+## Bug fix
+
+* Updated mysql code to map smallint
+
+## Feature
+* When generating config file there is now a check to see if there is an existing config. If no config exists then `use Mix.Config` is added
+
+## Misc
+* Removed mariaex library and migrated to myxql
+
 ## Changes in 2.3.2
 
 ## Bug fix
