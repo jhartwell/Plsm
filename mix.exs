@@ -20,7 +20,7 @@ defmodule Plsm.Mixfile do
 
   defp deps do
     [
-      {:ex_doc, "~> 0.21.0", only: :dev},
+      {:ex_doc, "~> 0.23.0", only: :dev, runtime: false},
       {:myxql, "~> 0.4.4"},
       {:postgrex, "~> 0.15"},
       {:ecto_sql, "~> 3.5.3", only: :test},
@@ -36,11 +36,14 @@ defmodule Plsm.Mixfile do
 
   defp package do
     [
-      name: :plsm,
+      name: "plsm",
       files: ["lib", "mix.exs", "README.md", "LICENSE"],
       maintainers: ["Jon Hartwell"],
       licenses: ["MIT License"],
-      links: %{"GitHub" => "https://github.com/jhartwell/Plsm"}
+      source_url: "https://github.com/jhartwell/Plsm",
+      homepage_url: "https://github.com/jhartwell/Plsm",
+      docs: [main: "Plsm",
+	     extras: ["README.md"]]
     ]
   end
 end
