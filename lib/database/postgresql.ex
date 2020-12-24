@@ -127,17 +127,20 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
     cond do
       String.starts_with?(upcase, "INTEGER") == true -> :integer
       String.starts_with?(upcase, "INT") == true -> :integer
+      String.starts_with?(upcase, "SMALLINT") == true -> :integer
       String.starts_with?(upcase, "BIGINT") == true -> :integer
-      String.contains?(upcase, "CHAR") == true -> :string
+      String.starts_with?(upcase, "CHAR") == true -> :string
       String.starts_with?(upcase, "TEXT") == true -> :string
       String.starts_with?(upcase, "FLOAT") == true -> :float
       String.starts_with?(upcase, "DOUBLE") == true -> :float
       String.starts_with?(upcase, "DECIMAL") == true -> :decimal
       String.starts_with?(upcase, "NUMERIC") == true -> :decimal
+      String.starts_with?(upcase, "JSON") == true -> :map
       String.starts_with?(upcase, "JSONB") == true -> :map
       String.starts_with?(upcase, "DATE") == true -> :date
-      String.starts_with?(upcase, "DATETIME") == true -> :date
-      String.starts_with?(upcase, "TIMESTAMP") == true -> :date
+      String.starts_with?(upcase, "DATETIME") == true -> :timestamp
+      String.starts_with?(upcase, "TIMESTAMP") == true -> :timestamp
+      String.starts_with?(upcase, "TIME") == true -> :time
       String.starts_with?(upcase, "BOOLEAN") == true -> :boolean
       true -> :none
     end

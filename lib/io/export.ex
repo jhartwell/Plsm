@@ -9,12 +9,15 @@ defmodule Plsm.IO.Export do
     |> four_space()
   end
 
+  defp map_type(:boolean), do: ":boolean"
   defp map_type(:decimal), do: ":decimal"
   defp map_type(:float), do: ":float"
   defp map_type(:string), do: ":string"
   defp map_type(:text), do: ":string"
   defp map_type(:map), do: ":map"
-  defp map_type(:date), do: ":naive_datetime"
+  defp map_type(:date), do: ":date"
+  defp map_type(:time), do: ":time"
+  defp map_type(:timestamp), do: ":naive_datetime"
   defp map_type(:integer), do: ":integer"
 
   @doc """
