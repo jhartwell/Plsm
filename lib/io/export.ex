@@ -56,7 +56,9 @@ defmodule Plsm.IO.Export do
   def prepare(table, project_name) do
     output =
       module_declaration(project_name, table.header.name) <>
-        model_inclusion() <> schema_declaration(table.header.name)
+        model_inclusion() <>
+        primary_key_disable() <>
+        schema_declaration(table.header.name)
 
     trimmed_columns = remove_foreign_keys(table.columns)
 
@@ -91,6 +93,10 @@ defmodule Plsm.IO.Export do
 
   defp model_inclusion do
     two_space("use Ecto.Schema\n" <> two_space("import Ecto.Changeset\n\n"))
+  end
+
+  defp primary_key_disable do
+    two_space("@primary_key false\n")
   end
 
   defp schema_declaration(table_name) do
