@@ -9,12 +9,15 @@ defmodule Plsm.IO.Export do
     |> four_space()
   end
 
+  defp map_type(:boolean), do: ":boolean"
   defp map_type(:decimal), do: ":decimal"
   defp map_type(:float), do: ":float"
   defp map_type(:string), do: ":string"
   defp map_type(:text), do: ":string"
   defp map_type(:map), do: ":map"
-  defp map_type(:date), do: ":naive_datetime"
+  defp map_type(:date), do: ":date"
+  defp map_type(:time), do: ":time"
+  defp map_type(:timestamp), do: ":naive_datetime"
   defp map_type(:integer), do: ":integer"
 
   @doc """
@@ -53,7 +56,9 @@ defmodule Plsm.IO.Export do
   def prepare(table, project_name) do
     output =
       module_declaration(project_name, table.header.name) <>
-        model_inclusion() <> schema_declaration(table.header.name)
+        model_inclusion() <>
+        primary_key_disable() <>
+        schema_declaration(table.header.name)
 
     trimmed_columns = remove_foreign_keys(table.columns)
 
@@ -88,6 +93,10 @@ defmodule Plsm.IO.Export do
 
   defp model_inclusion do
     two_space("use Ecto.Schema\n" <> two_space("import Ecto.Changeset\n\n"))
+  end
+
+  defp primary_key_disable do
+    two_space("@primary_key false\n")
   end
 
   defp schema_declaration(table_name) do
