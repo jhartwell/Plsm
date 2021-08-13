@@ -20,18 +20,27 @@ defmodule Plsm.IO.Export do
   defp map_type(:timestamp), do: ":naive_datetime"
   defp map_type(:integer), do: ":integer"
 
-  @doc """
-  When escaped name and name are the same, source option is not needed
-  """
-  defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?),
-    do: "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}\n"
 
   @doc """
+  When escaped name and name are the same, source option is not needed
   When escaped name and name are different, add a source option poitning to the original field name as an atom
+
+  When is a primary_key (possibly compound) set to true and write
+  When not a primary_key it is default to false so don't write it
   """
-  defp type_output_with_source(escaped_name, name, mapped_type, is_primary_key?),
-    do:
-      "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}, source: :\"#{name}\"\n"
+  defp type_output_with_source(escaped_name, name, mapped_type, is_primary_key?) do
+    str = "field :#{escaped_name}, #{mapped_type}"
+    str = if is_primary_key? do
+      str <> ", primary_key: #{is_primary_key?}"
+    else
+      str
+    end
+    if name != escaped_name do
+      str <> ", source: :\"#{name}\"\n"
+    else
+      str <> "\n"
+    end
+  end
 
   @doc """
     Write the given schema to file.
