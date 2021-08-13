@@ -55,13 +55,12 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
     |> Enum.map(fn x -> %Plsm.Database.TableHeader{database: db, name: x} end)
   end
 
-  @spec get_columns(Plsm.Database.PostgreSQL, Plsm.Database.Table) :: [Plsm.Database.Column]
-  def get_columns(db, table) do
+  @spec get_columns(Plsm.Database.PostgreSQL, Plsm.Database.TableHeader) :: [Plsm.Database.Column]
+  def get_columns(db, table_header) do
     {_, result} = Postgrex.query(db.connection, "
           SELECT DISTINCT
             a.attname as column_name,
             format_type(a.atttypid, a.atttypmod) as data_type,
-            coalesce(i.indisprimary,false) as primary_key,
             f.references_table as foreign_table,
             f.references_field as foreign_field,
             a.attnum as num
@@ -92,24 +91,39 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
 
       	WHERE lower(tc.constraint_type) in ('foreign key')
         ) as f on a.attname = f.field
-        LEFT JOIN pg_index i ON
-            (pgc.oid = i.indrelid AND i.indkey[0] = a.attnum)
+
         WHERE a.attnum > 0 AND pgc.oid = a.attrelid
         AND pg_table_is_visible(pgc.oid)
         AND NOT a.attisdropped
-        AND pgc.relname = '#{table.name}'
+        AND pgc.relname = '#{table_header.name}'
         ORDER BY a.attname;", [])
 
-    result.rows
-    |> Enum.map(&to_column/1)
+    {_, primay_key_result} = Postgrex.query(db.connection, "
+          SELECT
+          pg_attribute.attname,
+          pg_attribute.attnum as num,
+          format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+        FROM pg_index, pg_class, pg_attribute, pg_namespace
+        WHERE
+          indrelid = pg_class.oid AND
+          pg_class.relname = '#{table_header.name}' AND
+          pg_class.relnamespace = pg_namespace.oid AND
+          pg_attribute.attrelid = pg_class.oid AND
+          pg_attribute.attnum = any(pg_index.indkey)
+        AND indisprimary
+        ", [])
+
+    primary_keys = Enum.map(primay_key_result.rows, fn row -> Enum.fetch(row, 1) end)
+    Enum.map(result.rows, fn row ->
+      to_column(row, Enum.member?(primary_keys, Enum.fetch(row, 4)))
+    end)
   end
 
-  defp to_column(row) do
+  defp to_column(row, is_pk) do
     {_, name} = Enum.fetch(row, 0)
     type = Enum.fetch(row, 1) |> get_type
-    {_, foreign_table} = Enum.fetch(row, 3)
-    {_, foreign_field} = Enum.fetch(row, 4)
-    {_, is_pk} = Enum.fetch(row, 2)
+    {_, foreign_table} = Enum.fetch(row, 2)
+    {_, foreign_field} = Enum.fetch(row, 3)
 
     %Plsm.Database.Column{
       name: name,
