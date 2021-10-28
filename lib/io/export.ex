@@ -122,7 +122,7 @@ defmodule Plsm.IO.Export do
   end
 
   defp four_space_comment(text) do
-    "    -- " <> text
+    "    # " <> text
   end
 
   defp four_space(text) do
