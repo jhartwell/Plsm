@@ -76,20 +76,35 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
     downcase = String.downcase(type)
 
     cond do
-      String.starts_with?(downcase, "int") -> :integer
-      String.starts_with?(downcase, "bigint") -> :integer
       String.starts_with?(downcase, "tinyint(1)") -> :boolean
-      String.starts_with?(downcase, "tinyint") -> :integer
-      String.starts_with?(downcase, "bit") -> :integer
-      String.contains?(downcase, "char") -> :string
-      String.starts_with?(downcase, "text") -> :string
-      String.starts_with?(downcase, "float") -> :float
-      String.starts_with?(downcase, "double") -> :float
-      String.starts_with?(downcase, "decimal") -> :decimal
-      String.starts_with?(downcase, "date") -> :date
-      String.starts_with?(downcase, "datetime") -> :date
-      String.starts_with?(downcase, "timestamp") -> :date
-      String.starts_with?(downcase, "smallint") -> :integer
+      String.starts_with?(downcase, "tinyint")    -> :integer
+      String.starts_with?(downcase, "smallint")   -> :integer
+      String.starts_with?(downcase, "mediumint")  -> :integer
+      String.starts_with?(downcase, "int")        -> :integer
+      String.starts_with?(downcase, "bigint")     -> :integer
+      String.starts_with?(downcase, "float")      -> :float
+      String.starts_with?(downcase, "double")     -> :float
+      String.starts_with?(downcase, "decimal")    -> :decimal
+      String.starts_with?(downcase, "numeric")    -> :decimal
+      String.starts_with?(downcase, "date")       -> :date
+      String.starts_with?(downcase, "time")       -> :time
+      String.starts_with?(downcase, "year")       -> :date
+      String.starts_with?(downcase, "datetime")   -> :utc_datetime
+      String.starts_with?(downcase, "timestamp")  -> :utc_datetime
+      String.starts_with?(downcase, "bit(1)")     -> :boolean
+      String.starts_with?(downcase, "bit")        -> :binary
+      String.starts_with?(downcase, "binary")     -> :binary      
+      String.starts_with?(downcase, "varbinary")  -> :binary
+      String.starts_with?(downcase, "tinyblob")   -> :binary
+      String.starts_with?(downcase, "blob")       -> :binary
+      String.starts_with?(downcase, "mediumblob") -> :binary
+      String.starts_with?(downcase, "longblob")   -> :binary
+      String.starts_with?(downcase, "char")       -> :string
+      String.starts_with?(downcase, "varchar")    -> :string
+      String.starts_with?(downcase, "tinytext")   -> :string
+      String.starts_with?(downcase, "text")       -> :string
+      String.starts_with?(downcase, "mediumtext") -> :string
+      String.starts_with?(downcase, "longtext")   -> :string
       true -> :none
     end
   end
