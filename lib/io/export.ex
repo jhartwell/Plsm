@@ -1,22 +1,20 @@
 defmodule Plsm.IO.Export do
   @doc """
-    Ignore fields with unknow database type.
+    Generate the schema field based on the database type.
+    But comment out fields with unknown database type.
     
-    TODO: Would be better to moves this up the call-chain so
-          it can print which table and field it belongs.
+    TODO: Would be better to move error ouput up the call-chain
+          so it can print which table and field it belongs.
   """
   def type_output({name, :none, is_primary_key?}) do
     escaped_name = escaped_name(name)
     
     IO.puts :stderr, "#{name} has an unknown type."
     
-    type_output_with_source(escaped_name, name, map_type(type), is_primary_key?)
+    type_output_with_source(escaped_name, name, ":???", is_primary_key?)
     |> four_space_comment()
   end
 
-  @doc """
-    Generate the schema field based on the database type
-  """
   def type_output({name, type, is_primary_key?}) do
     escaped_name = escaped_name(name)
 
