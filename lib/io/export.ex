@@ -1,5 +1,20 @@
 defmodule Plsm.IO.Export do
   @doc """
+    Ignore fields with unknow database type.
+    
+    TODO: Would be better to moves this up the call-chain so
+          it can print which table and field it belongs.
+  """
+  def type_output({name, :none, is_primary_key?}) do
+    escaped_name = escaped_name(name)
+    
+    IO.puts :stderr, "#{name} has an unknown type."
+    
+    type_output_with_source(escaped_name, name, map_type(type), is_primary_key?)
+    |> four_space_comment()
+  end
+
+  @doc """
     Generate the schema field based on the database type
   """
   def type_output({name, type, is_primary_key?}) do
@@ -19,7 +34,8 @@ defmodule Plsm.IO.Export do
   defp map_type(:time), do: ":time"
   defp map_type(:timestamp), do: ":naive_datetime"
   defp map_type(:integer), do: ":integer"
-
+  drfp map_type(t), do: ":#{t}"
+  
   @doc """
   When escaped name and name are the same, source option is not needed
   """
@@ -105,6 +121,10 @@ defmodule Plsm.IO.Export do
 
   defp end_declaration do
     "end\n"
+  end
+
+  defp four_space_comment(text) do
+    "    -- " <> text
   end
 
   defp four_space(text) do
