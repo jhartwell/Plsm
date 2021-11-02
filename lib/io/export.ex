@@ -1,16 +1,11 @@
 defmodule Plsm.IO.Export do
   @doc """
     Generate the schema field based on the database type.
-    But comment out fields with unknown database type.
-    
-    TODO: Would be better to move error ouput up the call-chain
-          so it can print which table and field it belongs.
+    But comment out fields with unknown database type.   
   """
   def type_output({name, :none, is_primary_key?}) do
     escaped_name = escaped_name(name)
-    
-    IO.puts :stderr, "#{name} has an unknown type."
-    
+   
     type_output_with_source(escaped_name, name, ":???", is_primary_key?)
     |> four_space_comment()
   end
@@ -32,17 +27,13 @@ defmodule Plsm.IO.Export do
   defp map_type(:time), do: ":time"
   defp map_type(:timestamp), do: ":naive_datetime"
   defp map_type(:integer), do: ":integer"
-  drfp map_type(t), do: ":#{t}"
+  defp map_type(t), do: ":#{t}"
   
-  @doc """
-  When escaped name and name are the same, source option is not needed
-  """
+  # When escaped name and name are the same, source option is not needed
   defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?),
     do: "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}\n"
 
-  @doc """
-  When escaped name and name are different, add a source option poitning to the original field name as an atom
-  """
+  # When escaped name and name are different, add a source option poitning to the original field name as an atom
   defp type_output_with_source(escaped_name, name, mapped_type, is_primary_key?),
     do:
       "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}, source: :\"#{name}\"\n"
@@ -74,6 +65,8 @@ defmodule Plsm.IO.Export do
         primary_key_disable() <>
         schema_declaration(table.header.name)
 
+    warn_unknown_types(table, table.columns)
+    
     trimmed_columns = remove_foreign_keys(table.columns)
 
     column_output =
@@ -156,6 +149,14 @@ defmodule Plsm.IO.Export do
   defp remove_foreign_keys(columns) do
     Enum.filter(columns, fn column ->
       column.foreign_table == nil and column.foreign_field == nil
+    end)
+  end
+
+  defp warn_unknown_types(table, columns) do
+    Enum.each(columns, fn column ->
+      if column.type == :none do
+        IO.puts :stderr, "#{table.header.name} #{column.name} has an unknown type."
+      end
     end)
   end
 
