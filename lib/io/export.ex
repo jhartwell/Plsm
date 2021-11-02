@@ -31,22 +31,22 @@ defmodule Plsm.IO.Export do
   defp map_type(t),          do: ":#{t}"
   
   # When escaped name and name are the same, source option is not needed
-  defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?),
-    do: 
-      if id_primary_key? do
-        "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}\n"
-      else
-        "field :#{escaped_name}, #{mapped_type}\n"
-      end
-
+  defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?) do
+    if is_primary_key? do
+      "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}\n"
+    else
+      "field :#{escaped_name}, #{mapped_type}\n"
+    end
+  end
+  
   # When escaped name and name are different, add a source option poitning to the original field name as an atom
-  defp type_output_with_source(escaped_name, name, mapped_type, is_primary_key?),
-    do:
-      if id_primary_key? do
-        "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}, source: :\"#{name}\"\n"
-      else
-        "field :#{escaped_name}, #{mapped_type}, source: :\"#{name}\"\n"
-      end
+  defp type_output_with_source(escaped_name, name, mapped_type, is_primary_key?) do
+    if is_primary_key? do
+      "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}, source: :\"#{name}\"\n"
+    else
+      "field :#{escaped_name}, #{mapped_type}, source: :\"#{name}\"\n"
+    end
+  end
 
   @doc """
     Write the given schema to file.
