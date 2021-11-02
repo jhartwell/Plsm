@@ -17,17 +17,18 @@ defmodule Plsm.IO.Export do
     |> four_space()
   end
 
-  defp map_type(:boolean), do: ":boolean"
-  defp map_type(:decimal), do: ":decimal"
-  defp map_type(:float), do: ":float"
-  defp map_type(:string), do: ":string"
-  defp map_type(:text), do: ":string"
-  defp map_type(:map), do: ":map"
-  defp map_type(:date), do: ":date"
-  defp map_type(:time), do: ":time"
+  defp map_type(:boolean),   do: ":boolean"
+  defp map_type(:decimal),   do: ":decimal"
+  defp map_type(:float),     do: ":float"
+  defp map_type(:string),    do: ":string"
+  defp map_type(:text),      do: ":string"
+  defp map_type(:map),       do: ":map"
+  defp map_type(:date),      do: ":date"
+  defp map_type(:time),      do: ":time"
+  defp map_type(:datetime),  do: ":naive_datetime"
   defp map_type(:timestamp), do: ":naive_datetime"
-  defp map_type(:integer), do: ":integer"
-  defp map_type(t), do: ":#{t}"
+  defp map_type(:integer),   do: ":integer"
+  defp map_type(t),          do: ":#{t}"
   
   # When escaped name and name are the same, source option is not needed
   defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?),

@@ -88,9 +88,9 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
       String.starts_with?(downcase, "numeric")    -> :decimal
       String.starts_with?(downcase, "date")       -> :date
       String.starts_with?(downcase, "time")       -> :time
-      String.starts_with?(downcase, "year")       -> :date
-      String.starts_with?(downcase, "datetime")   -> :utc_datetime
-      String.starts_with?(downcase, "timestamp")  -> :utc_datetime
+      String.starts_with?(downcase, "year")       -> :date  # integer?
+      String.starts_with?(downcase, "datetime")   -> :datetime
+      String.starts_with?(downcase, "timestamp")  -> :timestamp
       String.starts_with?(downcase, "bit(1)")     -> :boolean
       String.starts_with?(downcase, "bit")        -> :binary
       String.starts_with?(downcase, "binary")     -> :binary      
