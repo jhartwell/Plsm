@@ -75,7 +75,7 @@ defmodule Plsm.IO.Export do
         primary_key_disable() <>
         schema_declaration(table.header.name)
 
-    warn_unknown_types(table, table.columns)
+    warn_unknown_types(table)
     
     trimmed_columns = remove_foreign_keys(table.columns)
 
@@ -162,10 +162,10 @@ defmodule Plsm.IO.Export do
     end)
   end
 
-  defp warn_unknown_types(table, columns) do
-    Enum.each(columns, fn column ->
+  defp warn_unknown_types(table) do
+    Enum.each(table.columns, fn column ->
       if column.type == :none do
-        IO.puts :stderr, "#{table.header.name} #{column.name} has an unknown type."
+        IO.puts :stderr, "#{column.name} in the #{table.header.name} table has an unsupported type of #{column.db_type}."
       end
     end)
   end

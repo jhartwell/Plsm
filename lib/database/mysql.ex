@@ -65,15 +65,16 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
 
   defp to_column(row) do
     {_, name} = Enum.fetch(row, 0)
-    type = Enum.fetch(row, 1) |> get_type
-    {_, pk} = Enum.fetch(row, 3)
-    primary_key? = pk == "PRI"
-    %Plsm.Database.Column{name: name, type: type, primary_key: primary_key?}
+    {_, type} = Enum.fetch(row, 1)
+    {_, prik} = Enum.fetch(row, 3)
+
+    pkey = (prik == "PRI")
+
+    %Plsm.Database.Column{name: name, type: trans_type(type), primary_key: pkey, db_type: type}
   end
 
-  defp get_type(start_type) do
-    {_, type} = start_type
-    downcase = String.downcase(type)
+  defp trans_type(db_type) do
+    downcase = String.downcase(db_type)
 
     cond do
       String.starts_with?(downcase, "tinyint(1)") -> :boolean
