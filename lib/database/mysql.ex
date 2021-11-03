@@ -9,8 +9,8 @@ end
 
 defimpl Plsm.Database, for: Plsm.Database.MySql do
   @doc """
-    Create a MySql database struct for use in connecting to the MySql database. We pass in the configs in order to 
-    properly connect
+    Create a MySql database struct for use in connecting to the MySql database.
+    We pass in the configs in order to properly connect
   """
   @spec create(Plsm.Database.MySql, Plsm.Configs) :: Plsm.Database.MySql
   def create(_db, configs) do
@@ -45,7 +45,8 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
     }
   end
 
-  # pass in a database and then get the tables using the mariaex query then turn the rows into a table
+  # Pass in a database and then get the tables using the `SHOW TABLES` query,
+  # then turn the rows into a table.
   @spec get_tables(Plsm.Database.MySql) :: [Plsm.Database.TableHeader]
   def get_tables(db) do
     {_, result} = MyXQL.query(db.connection, "SHOW TABLES")
@@ -73,6 +74,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
     %Plsm.Database.Column{name: name, type: trans_type(type), primary_key: pkey, db_type: type}
   end
 
+  # Intermediate type designation. The Export module determines the final ecto type.
   defp trans_type(db_type) do
     downcase = String.downcase(db_type)
 
