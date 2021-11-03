@@ -108,6 +108,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
       String.starts_with?(downcase, "text")       -> :string
       String.starts_with?(downcase, "mediumtext") -> :string
       String.starts_with?(downcase, "longtext")   -> :string
+      String.starts_with?(downcase, "json")       -> :map
       true -> :none
     end
   end
