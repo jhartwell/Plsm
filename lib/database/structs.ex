@@ -1,5 +1,5 @@
 defmodule Plsm.Database.Column do
-  defstruct name: nil, type: :none, primary_key: false, foreign_table: nil, foreign_field: nil
+  defstruct name: nil, type: :none, primary_key: false, foreign_table: nil, foreign_field: nil, db_type: nil
 end
 
 defmodule Plsm.Database.Table do

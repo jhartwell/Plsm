@@ -1,7 +1,15 @@
 defmodule Plsm.IO.Export do
   @doc """
-    Generate the schema field based on the database type
+    Generate the schema field based on the database type.
+    But comment out fields with unknown database type.   
   """
+  def type_output({name, :none, is_primary_key?}) do
+    escaped_name = escaped_name(name)
+   
+    type_output_with_source(escaped_name, name, ":???", is_primary_key?)
+    |> four_space_comment()
+  end
+
   def type_output({name, type, is_primary_key?}) do
     escaped_name = escaped_name(name)
 
@@ -9,29 +17,36 @@ defmodule Plsm.IO.Export do
     |> four_space()
   end
 
-  defp map_type(:boolean), do: ":boolean"
-  defp map_type(:decimal), do: ":decimal"
-  defp map_type(:float), do: ":float"
-  defp map_type(:string), do: ":string"
-  defp map_type(:text), do: ":string"
-  defp map_type(:map), do: ":map"
-  defp map_type(:date), do: ":date"
-  defp map_type(:time), do: ":time"
+  defp map_type(:boolean),   do: ":boolean"
+  defp map_type(:decimal),   do: ":decimal"
+  defp map_type(:float),     do: ":float"
+  defp map_type(:string),    do: ":string"
+  defp map_type(:text),      do: ":string"
+  defp map_type(:map),       do: ":map"
+  defp map_type(:date),      do: ":date"
+  defp map_type(:time),      do: ":time"
+  defp map_type(:datetime),  do: ":naive_datetime"
   defp map_type(:timestamp), do: ":naive_datetime"
-  defp map_type(:integer), do: ":integer"
-
-  @doc """
-  When escaped name and name are the same, source option is not needed
-  """
-  defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?),
-    do: "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}\n"
-
-  @doc """
-  When escaped name and name are different, add a source option poitning to the original field name as an atom
-  """
-  defp type_output_with_source(escaped_name, name, mapped_type, is_primary_key?),
-    do:
+  defp map_type(:integer),   do: ":integer"
+  defp map_type(t),          do: ":#{t}"
+  
+  # When escaped name and name are the same, source option is not needed
+  defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?) do
+    if is_primary_key? do
+      "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}\n"
+    else
+      "field :#{escaped_name}, #{mapped_type}\n"
+    end
+  end
+  
+  # When escaped name and name are different, add a source option poitning to the original field name as an atom
+  defp type_output_with_source(escaped_name, name, mapped_type, is_primary_key?) do
+    if is_primary_key? do
       "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}, source: :\"#{name}\"\n"
+    else
+      "field :#{escaped_name}, #{mapped_type}, source: :\"#{name}\"\n"
+    end
+  end
 
   @doc """
     Write the given schema to file.
@@ -60,6 +75,8 @@ defmodule Plsm.IO.Export do
         primary_key_disable() <>
         schema_declaration(table.header.name)
 
+    warn_unknown_types(table)
+    
     trimmed_columns = remove_foreign_keys(table.columns)
 
     column_output =
@@ -107,6 +124,10 @@ defmodule Plsm.IO.Export do
     "end\n"
   end
 
+  defp four_space_comment(text) do
+    "    # " <> text
+  end
+
   defp four_space(text) do
     "    " <> text
   end
@@ -138,6 +159,14 @@ defmodule Plsm.IO.Export do
   defp remove_foreign_keys(columns) do
     Enum.filter(columns, fn column ->
       column.foreign_table == nil and column.foreign_field == nil
+    end)
+  end
+
+  defp warn_unknown_types(table) do
+    Enum.each(table.columns, fn column ->
+      if column.type == :none do
+        IO.puts :stderr, "#{column.name} in the #{table.header.name} table has an unsupported type of #{column.db_type}."
+      end
     end)
   end
 
