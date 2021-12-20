@@ -13,6 +13,10 @@ defmodule Plsm.Database.Common do
         IO.puts("Using PostgreSQL...")
         Plsm.Database.create(%Plsm.Database.PostgreSQL{}, configs)
 
+      :sqlite ->
+        IO.puts("Using SQLite...")
+        Plsm.Database.create(%Plsm.Database.SQLite{}, configs)
+
       _ ->
         IO.puts("Using default database MySql...")
         Plsm.Database.create(%Plsm.Database.MySql{}, configs)

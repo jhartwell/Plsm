@@ -15,7 +15,7 @@ defmodule Plsm.Mixfile do
   end
 
   def application do
-    [applications: [:postgrex, :myxql]]
+    [applications: [:postgrex, :myxql, :exqlite]]
   end
 
   defp deps do
@@ -23,6 +23,7 @@ defmodule Plsm.Mixfile do
       {:ex_doc, "~> 0.23.0", only: :dev, runtime: false},
       {:myxql, "~> 0.4.4"},
       {:postgrex, "~> 0.15"},
+      {:exqlite, "~> 0.8.4"},
       {:ecto_sql, "~> 3.5.3", only: :test},
       {:mock, "~> 0.2.0", only: :test}
     ]
