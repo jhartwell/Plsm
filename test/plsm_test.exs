@@ -24,7 +24,31 @@ defmodule PlsmTest do
     test "schema files are generated and can compile" do
       Mix.Tasks.Plsm.run([])
 
-      assert :ok == IEx.Helpers.recompile()
+      assert :ok == IEx.Helpers.recompile([force: true])
+    end
+  end
+
+  describe "plsm task using sqlite" do
+    setup do
+      Application.put_env(:plsm, :filename, File.cwd! <> "/test/support/schemas/sqlite/test.sqlite")
+      Application.put_env(:plsm, :type, :sqlite)
+      Application.put_env(:plsm, :module_name, "PlsmTest")
+      Application.put_env(:plsm, :destination, @schema_dir)
+
+      :ok
+    end
+
+    test "schema files are generated and can compile" do
+      Mix.Tasks.Plsm.run([])
+
+      assert :ok == IEx.Helpers.recompile([force: true])
+
+      assert File.exists?(@schema_dir <> "test_entity_one.ex")
+      assert File.exists?(@schema_dir <> "test_entity_two.ex")
+
+      File.ls!("#{@schema_dir}")
+      |> Enum.filter(fn file -> !String.starts_with?(file, ".") end)
+      |> Enum.each(fn file -> File.rm!(@schema_dir <> file) end)
     end
   end
 end

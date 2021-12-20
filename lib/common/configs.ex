@@ -10,6 +10,7 @@ defmodule Plsm.Common.Configs do
       database_name: Application.get_env(:plsm, :database_name, ""),
       username: Application.get_env(:plsm, :username, ""),
       password: Application.get_env(:plsm, :password, ""),
+      filename: Application.get_env(:plsm, :filename, ""),
       type: Application.get_env(:plsm, :type, :mysql)
     }
 
