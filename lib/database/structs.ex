@@ -12,7 +12,14 @@ defmodule Plsm.Database.TableHeader do
   def table_name(table_name) do
     table_name
     |> String.split("_")
+    |> singularize()
     |> Enum.map(fn x -> String.capitalize(x) end)
     |> Enum.reduce(fn x, acc -> acc <> x end)
+  end
+
+  def singularize([word]), do: [Inflex.singularize(word)]
+
+  def singularize([first | rest]) do
+    [first | singularize(rest)]
   end
 end
