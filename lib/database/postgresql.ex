@@ -4,6 +4,7 @@ defmodule Plsm.Database.PostgreSQL do
             username: "postgres",
             password: "postgres",
             database_name: "db",
+            schema: "public",
             connection: nil
 end
 
@@ -15,7 +16,8 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
       port: configs.database.port,
       username: configs.database.username,
       password: configs.database.password,
-      database_name: configs.database.database_name
+      database_name: configs.database.database_name,
+      schema: configs.database.schema
     }
   end
 
@@ -30,13 +32,16 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
         database: db.database_name
       )
 
+    Postgrex.query!(conn, "SET search_path TO '#{db.schema}';", [])
+
     %Plsm.Database.PostgreSQL{
       connection: conn,
       server: db.server,
       port: db.port,
       username: db.username,
       password: db.password,
-      database_name: db.database_name
+      database_name: db.database_name,
+      schema: db.schema
     }
   end
 
@@ -46,7 +51,7 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
     {_, result} =
       Postgrex.query(
         db.connection,
-        "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';",
+        "SELECT table_name FROM information_schema.tables WHERE table_schema = '#{db.schema}';",
         []
       )
 
