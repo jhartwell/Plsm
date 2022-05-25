@@ -129,25 +129,65 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
     {_, type} = start_type
     upcase = String.upcase(type)
 
+    custom_types = Application.get_env(:plsm, :custom_types, %{})
+
     cond do
-      String.starts_with?(upcase, "INTEGER") == true -> :integer
-      String.starts_with?(upcase, "INT") == true -> :integer
-      String.starts_with?(upcase, "SMALLINT") == true -> :integer
-      String.starts_with?(upcase, "BIGINT") == true -> :integer
-      String.starts_with?(upcase, "CHAR") == true -> :string
-      String.starts_with?(upcase, "TEXT") == true -> :string
-      String.starts_with?(upcase, "FLOAT") == true -> :float
-      String.starts_with?(upcase, "DOUBLE") == true -> :float
-      String.starts_with?(upcase, "DECIMAL") == true -> :decimal
-      String.starts_with?(upcase, "NUMERIC") == true -> :decimal
-      String.starts_with?(upcase, "JSON") == true -> :map
-      String.starts_with?(upcase, "JSONB") == true -> :map
-      String.starts_with?(upcase, "DATE") == true -> :date
-      String.starts_with?(upcase, "DATETIME") == true -> :timestamp
-      String.starts_with?(upcase, "TIMESTAMP") == true -> :timestamp
-      String.starts_with?(upcase, "TIME") == true -> :time
-      String.starts_with?(upcase, "BOOLEAN") == true -> :boolean
-      true -> :none
+      String.starts_with?(upcase, "INTEGER") ->
+        :integer
+
+      String.starts_with?(upcase, "INT") ->
+        :integer
+
+      String.starts_with?(upcase, "SMALLINT") ->
+        :integer
+
+      String.starts_with?(upcase, "BIGINT") ->
+        :integer
+
+      String.starts_with?(upcase, "CHAR") ->
+        :string
+
+      String.starts_with?(upcase, "TEXT") ->
+        :string
+
+      String.starts_with?(upcase, "FLOAT") ->
+        :float
+
+      String.starts_with?(upcase, "DOUBLE") ->
+        :float
+
+      String.starts_with?(upcase, "DECIMAL") ->
+        :decimal
+
+      String.starts_with?(upcase, "NUMERIC") ->
+        :decimal
+
+      String.starts_with?(upcase, "JSON") ->
+        :map
+
+      String.starts_with?(upcase, "JSONB") ->
+        :map
+
+      String.starts_with?(upcase, "DATE") ->
+        :date
+
+      String.starts_with?(upcase, "DATETIME") ->
+        :timestamp
+
+      String.starts_with?(upcase, "TIMESTAMP") ->
+        :timestamp
+
+      String.starts_with?(upcase, "TIME") ->
+        :time
+
+      String.starts_with?(upcase, "BOOLEAN") ->
+        :boolean
+
+      String.starts_with?(upcase, "UUID") ->
+        :uuid4
+
+      true ->
+        Map.get(custom_types, upcase, :none)
     end
   end
 end
