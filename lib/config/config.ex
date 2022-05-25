@@ -8,6 +8,7 @@ defmodule Plsm.Config.Config do
 
   def write(file_name) do
     config_exists? = File.exists?(file_name)
+
     case File.open(file_name, [:append]) do
       {:ok, file} -> IO.binwrite(file, output_config(config_exists?))
       _ -> {:error, "Could not open file #{file_name}. Please ensure that it exists."}
@@ -30,15 +31,17 @@ defmodule Plsm.Config.Config do
     current
     |> append_config_item_string("server", "localhost")
     |> append_next_item()
-    |> append_config_item_string("port", "3306")
+    |> append_config_item_string("port", "5432")
     |> append_next_item()
     |> append_config_item_string("database_name", "name of database")
     |> append_next_item()
-    |> append_config_item_string("username", "username")
+    |> append_config_item_string("username", "postgres")
     |> append_next_item()
-    |> append_config_item_string("password", "password")
+    |> append_config_item_string("password", "postgres")
     |> append_next_item()
-    |> append_config_item_atom("type", "mysql")
+    |> append_config_item_atom("type", "postgres")
+    |> append_next_item()
+    |> append_config_item_string("schema", "public")
   end
 
   defp project_config(current) do
@@ -71,6 +74,7 @@ defmodule Plsm.Config.Config do
      #    * username -> The username that is used to connect. Make sure that there is sufficient privileges to be able to connect, query tables as well as query information schemas on the database. The schema information is used to find the index/keys on each table
      #    * password -> This is necessary as there is no default nor is there any handling of a blank password currently.
      #    * type -> This dictates which database vendor you are using. We currently support PostgreSQL and MySQL. If no value is entered then it will default to MySQL. Do note that this is an atom and not a string
+     #    * schema -> The database schema namespace for the target tables.
     """
   end
 
