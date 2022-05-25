@@ -187,7 +187,7 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
         :uuid4
 
       true ->
-        Map.get(custom_types, upcase, :none)
+        Map.get(custom_types, upcase, {:none, upcase})
     end
   end
 end

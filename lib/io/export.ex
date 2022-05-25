@@ -19,6 +19,13 @@ defmodule Plsm.IO.Export do
   defp map_type(:time), do: ":time"
   defp map_type(:timestamp), do: ":naive_datetime"
   defp map_type(:integer), do: ":integer"
+  defp map_type(:uuid), do: "Ecto.UUID"
+
+  defp map_type({:none, datatype}) do
+    raise "Unknown column type: #{datatype}"
+  end
+
+  defp map_type(type) when is_atom(type), do: to_string(type)
 
   defp map_type({:none, datatype}) do
     raise "Unknown column type: #{datatype}"
