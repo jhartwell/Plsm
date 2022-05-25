@@ -27,12 +27,6 @@ defmodule Plsm.IO.Export do
 
   defp map_type(type) when is_atom(type), do: to_string(type)
 
-  defp map_type({:none, datatype}) do
-    raise "Unknown column type: #{datatype}"
-  end
-
-  defp map_type(type) when is_atom(type), do: to_string(type)
-
   @doc """
   When escaped name and name are the same, source option is not needed
   """
