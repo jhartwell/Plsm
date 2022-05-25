@@ -184,7 +184,7 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
         :boolean
 
       String.starts_with?(upcase, "UUID") ->
-        :uuid4
+        :uuid
 
       true ->
         Map.get(custom_types, upcase, {:none, upcase})
