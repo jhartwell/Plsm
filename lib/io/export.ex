@@ -19,19 +19,35 @@ defmodule Plsm.IO.Export do
   defp map_type(:time), do: ":time"
   defp map_type(:timestamp), do: ":naive_datetime"
   defp map_type(:integer), do: ":integer"
+  defp map_type(:uuid), do: "Ecto.UUID"
+
+  defp map_type({:none, datatype}) do
+    raise "Unknown column type: #{datatype}"
+  end
+
+  defp map_type(type) when is_atom(type), do: to_string(type)
 
   @doc """
   When escaped name and name are the same, source option is not needed
   """
-  defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?),
-    do: "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}\n"
+  defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?) do
+    if is_primary_key? do
+      "field :#{escaped_name}, #{mapped_type}, primary_key: true\n"
+    else
+      "field :#{escaped_name}, #{mapped_type}\n"
+    end
+  end
 
   @doc """
   When escaped name and name are different, add a source option poitning to the original field name as an atom
   """
-  defp type_output_with_source(escaped_name, name, mapped_type, is_primary_key?),
-    do:
-      "field :#{escaped_name}, #{mapped_type}, primary_key: #{is_primary_key?}, source: :\"#{name}\"\n"
+  defp type_output_with_source(escaped_name, name, mapped_type, is_primary_key?) do
+    if is_primary_key? do
+      "field :#{escaped_name}, #{mapped_type}, primary_key: true, source: :\"#{name}\"\n"
+    else
+      "field :#{escaped_name}, #{mapped_type}, source: :\"#{name}\"\n"
+    end
+  end
 
   @doc """
     Write the given schema to file.
@@ -58,6 +74,7 @@ defmodule Plsm.IO.Export do
       module_declaration(project_name, table.header.name) <>
         model_inclusion() <>
         primary_key_disable() <>
+        schema_prefix_declaration() <>
         schema_declaration(table.header.name)
 
     trimmed_columns = remove_foreign_keys(table.columns)
@@ -97,6 +114,15 @@ defmodule Plsm.IO.Export do
 
   defp primary_key_disable do
     two_space("@primary_key false\n")
+  end
+
+  defp schema_prefix_declaration do
+    configs = Plsm.Common.Configs.load_configs()
+
+    case configs.database.schema do
+      "public" -> ""
+      prefix -> two_space("@schema_prefix \"#{prefix}\"\n")
+    end
   end
 
   defp schema_declaration(table_name) do
