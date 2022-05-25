@@ -15,9 +15,20 @@ defmodule Mix.Tasks.Plsm do
     |> Enum.map(fn {header, columns} -> %Plsm.Database.Table{header: header, columns: columns} end)
     |> Enum.map(fn table -> Plsm.IO.Export.prepare(table, configs.project.name) end)
     |> Enum.map(fn {header, output} ->
-      Plsm.IO.Export.write(output, header.name, configs.project.destination)
+      filename = singularize(header.name)
+      Plsm.IO.Export.write(output, filename, configs.project.destination)
     end)
   end
+
+  defp singularize(filename) when is_binary(filename) do
+    filename
+    |> String.split("_")
+    |> singularize()
+    |> Enum.join("_")
+  end
+
+  defp singularize([word]), do: [Inflex.singularize(word)]
+  defp singularize([first | rest]), do: [first | singularize(rest)]
 end
 
 defmodule Mix.Tasks.Plsm.Config do
