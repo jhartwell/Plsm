@@ -73,6 +73,7 @@ defmodule Plsm.IO.Export do
       module_declaration(project_name, table.header.name) <>
         model_inclusion() <>
         primary_key_disable() <>
+        schema_prefix_declaration() <>
         schema_declaration(table.header.name)
 
     trimmed_columns = remove_foreign_keys(table.columns)
@@ -112,6 +113,15 @@ defmodule Plsm.IO.Export do
 
   defp primary_key_disable do
     two_space("@primary_key false\n")
+  end
+
+  defp schema_prefix_declaration do
+    configs = Plsm.Common.Configs.load_configs()
+
+    case configs.database.schema do
+      "public" -> ""
+      prefix -> two_space("@schema_prefix \"#{prefix}\"\n")
+    end
   end
 
   defp schema_declaration(table_name) do
