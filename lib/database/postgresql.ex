@@ -182,27 +182,4 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
     end
   end
 
-  @doc """
-  Returns a map of all known custom types, each containing a list of supported values
-
-  ## Example:
-    iex> get_enums(db)
-    %{
-      "contract_type" => ["technical", "billing", "partner", "owner"],
-      "inquiry_type"  => ["seller", "buyer"]
-    }
-  """
-  @spec get_enums(map) :: %{String.t => [String.t]}
-  def get_enums(db) do
-    {_, %{rows: rows}} =
-      Postgrex.query(db.connection, "
-        SELECT
-          UPPER(t.typname) AS enum_name,
-          e.enumlabel      AS enum_value
-        FROM pg_type t
-          JOIN pg_enum e ON t.oid = e.enumtypid
-          JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace;
-      ", [])
-    Enum.group_by(rows, fn ([type, _val]) -> type end, fn ([_type, val]) -> val end)
-  end
 end
