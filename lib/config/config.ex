@@ -18,7 +18,7 @@ defmodule Plsm.Config.Config do
   defp output_config(config_exists?) do
     case config_exists? do
       true -> "\n\n"
-      false -> "use Mix.Config\n\n"
+      false -> "import Config\n\n"
     end
     |> config_header()
     |> append_next_item()
@@ -42,6 +42,9 @@ defmodule Plsm.Config.Config do
     |> append_config_item_atom("type", "postgres")
     |> append_next_item()
     |> append_config_item_string("schema", "public")
+    |> append_next_item()
+    |> append_config_item("typed_schema", false)
+
   end
 
   defp project_config(current) do
@@ -51,17 +54,10 @@ defmodule Plsm.Config.Config do
     |> append_config_item_string("destination", "output path")
   end
 
-  defp append_config_item_string(current, key, value) do
-    current <> "#{key}: \"#{value}\""
-  end
-
-  defp append_next_item(current) do
-    current <> ",\n"
-  end
-
-  defp append_config_item_atom(current, key, value) do
-    current <> "#{key}: :#{value}"
-  end
+  defp append_config_item_string(cur, key, val), do: cur <> "  #{key}: \"#{val}\""
+  defp append_next_item(cur),                    do: cur <> ",\n"
+  defp append_config_item_atom(cur, key, val),   do: cur <> "  #{key}: :#{val}"
+  defp append_config_item(cur, key, val),        do: cur <> "  #{key}: #{val}"
 
   defp docs() do
     """
@@ -75,6 +71,8 @@ defmodule Plsm.Config.Config do
      #    * password -> This is necessary as there is no default nor is there any handling of a blank password currently.
      #    * type -> This dictates which database vendor you are using. We currently support PostgreSQL and MySQL. If no value is entered then it will default to MySQL. Do note that this is an atom and not a string
      #    * schema -> The database schema namespace for the target tables.
+     #    * typed_schema -> If true will use 'TypedEctoSchema' from the 'typed_ecto_schema' project.
+     #    * overwrite -> If true files will be overwritten, otherwise the user is prompted for action
     """
   end
 

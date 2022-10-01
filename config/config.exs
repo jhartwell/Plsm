@@ -1,6 +1,6 @@
 # This file is responsible for configuring your application
 # and its dependencies with the aid of the Mix.Config module.
-use Mix.Config
+import Config
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
@@ -40,11 +40,11 @@ use Mix.Config
 #    * type -> This dictates which database vendor you are using. We currently support PostgreSQL and MySQL. If no value is entered then it will default to MySQL. Accepted values: :mysql or :postgres. Do note that this is an atom and not a string
 
 config :plsm,
-  module_name: "module name",
-  destination: "output path",
-  server: "localhost",
-  port: "3306",
+  module_name:   "module name",
+  destination:   "output path",
+  server:        "localhost",
+  port:          5432,
   database_name: "name of database",
-  username: "username",
-  password: "password",
-  type: :mysql
+  username:      "username",
+  password:      "password",
+  type:          :postgres

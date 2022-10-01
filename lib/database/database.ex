@@ -18,4 +18,8 @@ defprotocol Plsm.Database do
     Get the columns for the table that is passed in
   """
   def get_columns(db, table)
+
+  @doc "Get all known enum types"
+  @spec get_enums(map) :: %{String.t => [String.t]}
+  def get_enums(db)
 end

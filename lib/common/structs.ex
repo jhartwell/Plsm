@@ -9,7 +9,9 @@ defmodule Plsm.Configs.Database do
             username: "",
             password: "",
             type: :mysql,
-            schema: ""
+            schema: "",
+            typed_schema: false,
+            overwrite: false
 end
 
 defmodule Plsm.Configs.Project do

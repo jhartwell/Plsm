@@ -15,7 +15,7 @@ defmodule Plsm.Mixfile do
   end
 
   def application do
-    [applications: [:postgrex, :myxql]]
+    [applications: [:postgrex, :myxql, :inflex]]
   end
 
   defp deps do

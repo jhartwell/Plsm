@@ -9,7 +9,7 @@ end
 
 defimpl Plsm.Database, for: Plsm.Database.MySql do
   @doc """
-    Create a MySql database struct for use in connecting to the MySql database. We pass in the configs in order to 
+    Create a MySql database struct for use in connecting to the MySql database. We pass in the configs in order to
     properly connect
   """
   @spec create(Plsm.Database.MySql, Plsm.Configs) :: Plsm.Database.MySql
@@ -62,6 +62,9 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
     result.rows
     |> Enum.map(&to_column/1)
   end
+
+  @doc "Not implemented"
+  def get_enums(_db), do: %{}
 
   defp to_column(row) do
     {_, name} = Enum.fetch(row, 0)

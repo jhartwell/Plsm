@@ -7,14 +7,18 @@ defmodule Mix.Tasks.Plsm do
 
     configs = Plsm.Common.Configs.load_configs()
 
-    configs
+    db = configs
     |> Plsm.Database.Common.create()
     |> Plsm.Database.connect()
+
+    enums = Plsm.Database.get_enums(db)
+
+    db
     |> Plsm.Database.get_tables()
-    |> Enum.map(fn x -> {x, Plsm.Database.get_columns(x.database, x)} end)
-    |> Enum.map(fn {header, columns} -> %Plsm.Database.Table{header: header, columns: columns} end)
-    |> Enum.map(fn table -> Plsm.IO.Export.prepare(table, configs.project.name) end)
-    |> Enum.map(fn {header, output} ->
+    |> Enum.map(fn x ->
+      columns = Plsm.Database.get_columns(x.database, x)
+      table   = %Plsm.Database.Table{header: x, columns: columns}
+      {header, output} = Plsm.IO.Export.prepare(table, configs.project.name, enums)
       filename = singularize(header.name)
       Plsm.IO.Export.write(output, filename, configs.project.destination)
     end)

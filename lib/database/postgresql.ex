@@ -51,7 +51,7 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
     {_, result} =
       Postgrex.query(
         db.connection,
-        "SELECT table_name FROM information_schema.tables WHERE table_schema = '#{db.schema}';",
+        "SELECT table_name FROM information_schema.tables WHERE table_schema = '#{db.schema}' and table_name != 'schema_migrations';",
         []
       )
 
@@ -63,39 +63,39 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
   @spec get_columns(Plsm.Database.PostgreSQL, Plsm.Database.Table) :: [Plsm.Database.Column]
   def get_columns(db, table) do
     {_, result} = Postgrex.query(db.connection, "
-          SELECT DISTINCT
-            a.attname as column_name,
-            format_type(a.atttypid, a.atttypmod) as data_type,
-            coalesce(i.indisprimary,false) as primary_key,
-            f.references_table as foreign_table,
-            f.references_field as foreign_field,
-            a.attnum as num
-         FROM pg_attribute a
-         JOIN pg_class pgc ON pgc.oid = a.attrelid
-         left JOIN (
-      	SELECT
-      	tc.table_name as table,
-      	kcu.column_name as field,
-      	ccu.table_name AS references_table,
-      	ccu.column_name AS references_field
-      	FROM information_schema.table_constraints tc
+      SELECT DISTINCT
+          a.attname as column_name,
+          format_type(a.atttypid, a.atttypmod) as data_type,
+          coalesce(i.indisprimary,false) as primary_key,
+          f.references_table as foreign_table,
+          f.references_field as foreign_field,
+          a.attnum as num
+        FROM pg_attribute a
+        JOIN pg_class pgc ON pgc.oid = a.attrelid
+        left JOIN (
+          SELECT
+            tc.table_name as table,
+            kcu.column_name as field,
+            ccu.table_name AS references_table,
+            ccu.column_name AS references_field
+          FROM information_schema.table_constraints tc
 
-      	LEFT JOIN information_schema.key_column_usage kcu
-      	ON tc.constraint_catalog = kcu.constraint_catalog
-      	AND tc.constraint_schema = kcu.constraint_schema
-      	AND tc.constraint_name = kcu.constraint_name
+          LEFT JOIN information_schema.key_column_usage kcu
+            ON tc.constraint_catalog = kcu.constraint_catalog
+            AND tc.constraint_schema = kcu.constraint_schema
+            AND tc.constraint_name = kcu.constraint_name
 
-      	LEFT JOIN information_schema.referential_constraints rc
-      	ON tc.constraint_catalog = rc.constraint_catalog
-      	AND tc.constraint_schema = rc.constraint_schema
-      	AND tc.constraint_name = rc.constraint_name
+          LEFT JOIN information_schema.referential_constraints rc
+            ON tc.constraint_catalog = rc.constraint_catalog
+            AND tc.constraint_schema = rc.constraint_schema
+            AND tc.constraint_name = rc.constraint_name
 
-      	LEFT JOIN information_schema.constraint_column_usage ccu
-      	ON rc.unique_constraint_catalog = ccu.constraint_catalog
-      	AND rc.unique_constraint_schema = ccu.constraint_schema
-      	AND rc.unique_constraint_name = ccu.constraint_name
+          LEFT JOIN information_schema.constraint_column_usage ccu
+            ON rc.unique_constraint_catalog = ccu.constraint_catalog
+            AND rc.unique_constraint_schema = ccu.constraint_schema
+            AND rc.unique_constraint_name = ccu.constraint_name
 
-      	WHERE lower(tc.constraint_type) in ('foreign key')
+          WHERE lower(tc.constraint_type) in ('foreign key')
         ) as f on a.attname = f.field
         LEFT JOIN pg_index i ON
             (pgc.oid = i.indrelid AND i.indkey[0] = a.attnum)
@@ -126,68 +126,53 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
   end
 
   defp get_type(start_type) do
-    {_, type} = start_type
-    upcase = String.upcase(type)
-
+    {_, type}    = start_type
     custom_types = Application.get_env(:plsm, :custom_types, %{})
 
-    cond do
-      String.starts_with?(upcase, "INTEGER") ->
-        :integer
-
-      String.starts_with?(upcase, "INT") ->
-        :integer
-
-      String.starts_with?(upcase, "SMALLINT") ->
-        :integer
-
-      String.starts_with?(upcase, "BIGINT") ->
-        :integer
-
-      String.starts_with?(upcase, "CHAR") ->
-        :string
-
-      String.starts_with?(upcase, "TEXT") ->
-        :string
-
-      String.starts_with?(upcase, "FLOAT") ->
-        :float
-
-      String.starts_with?(upcase, "DOUBLE") ->
-        :float
-
-      String.starts_with?(upcase, "DECIMAL") ->
-        :decimal
-
-      String.starts_with?(upcase, "NUMERIC") ->
-        :decimal
-
-      String.starts_with?(upcase, "JSON") ->
-        :map
-
-      String.starts_with?(upcase, "JSONB") ->
-        :map
-
-      String.starts_with?(upcase, "DATE") ->
-        :date
-
-      String.starts_with?(upcase, "DATETIME") ->
-        :timestamp
-
-      String.starts_with?(upcase, "TIMESTAMP") ->
-        :timestamp
-
-      String.starts_with?(upcase, "TIME") ->
-        :time
-
-      String.starts_with?(upcase, "BOOLEAN") ->
-        :boolean
-
-      String.starts_with?(upcase, "UUID") ->
-        :uuid
-
-      true ->
-        Map.get(custom_types, upcase, {:none, upcase})
+    case String.upcase(type) do
+      "INTEGER"  <> _ -> :integer
+      "INT"      <> _ -> :integer
+      "SMALLINT" <> _ -> :integer
+      "BIGINT"   <> _ -> :integer
+      "CHAR"     <> _ -> :string
+      "TEXT"     <> _ -> :string
+      "FLOAT"    <> _ -> :float
+      "DOUBLE"   <> _ -> :float
+      "DECIMAL"  <> _ -> :decimal
+      "NUMERIC"  <> _ -> :decimal
+      "JSON"     <> _ -> :map
+      "JSONB"    <> _ -> :map
+      "DATE"     <> _ -> :date
+      "DATETIME" <> _ -> :timestamp
+      "TIMESTAMP"<> _ -> :timestamp
+      "TIME"     <> _ -> :time
+      "BOOLEAN"  <> _ -> :boolean
+      "UUID"     <> _ -> :uuid
+      val             -> Map.get(custom_types, val, {:none, val})
     end
+  end
+
+  @doc """
+  Returns a map of all known custom types, each containing a list of supported values
+
+  ## Example:
+    iex> get_enums(db)
+    %{
+      "contract_type" => ["technical", "billing", "partner", "owner"],
+      "inquiry_type"  => ["seller", "buyer"]
+    }
+  """
+  @spec get_enums(map) :: %{String.t => [String.t]}
+  def get_enums(db) do
+    {_, %{rows: rows}} =
+      Postgrex.query(db.connection, "
+        SELECT
+          UPPER(t.typname) AS enum_name,
+          e.enumlabel      AS enum_value
+        FROM pg_type t
+          JOIN pg_enum e ON t.oid = e.enumtypid
+          JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace;
+      ", [])
+    Enum.group_by(rows, fn ([type, _val]) -> type end, fn ([_type, val]) -> val end)
   end
 end
