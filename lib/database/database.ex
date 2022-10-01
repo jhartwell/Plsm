@@ -1,25 +1,43 @@
 defprotocol Plsm.Database do
-  @doc """
-    Create a database struct that implements the Plsm.Database protocol.
-  """
-  def create(db, configs)
+  alias Plsm.Database.{TableHeader, Column}
 
-  @doc """
-    Connect to the given database
-  """
-  def connect(db)
+  defstruct server:       "",
+            port:         "",
+            database:     "",
+            username:     "",
+            password:     "",
+            type:         :mysql,
+            schema:       "",
+            typed_schema: false,
+            overwrite:    false,
+            app:          nil
 
-  @doc """
-    Get all of the tables that are in the database that was selected
-  """
-  def get_tables(db)
+  @type t :: %__MODULE__{
+    server:       String.t,
+    port:         String.t | integer,
+    database:     String.t,
+    username:     String.t,
+    password:     String.t,
+    type:         :mysql | :postgres,
+    schema:       String.t,
+    typed_schema: boolean,
+    overwrite:    boolean,
+    app:          atom
+  }
 
-  @doc """
-    Get the columns for the table that is passed in
-  """
-  def get_columns(db, table)
+  @doc "Connect to the given database"
+  @spec connect(map) :: Plsm.Database.t
+  def   connect(db)
 
-  @doc "Get all known enum types"
+  @doc "Get all of the tables that are in the database that was selected"
+  @spec get_tables(map) :: [TableHeader.t]
+  def   get_tables(db)
+
+  @doc "Get the columns for the table that is passed in"
+  @spec get_columns(map, TableHeader.t) :: [Column.t]
+  def   get_columns(db, table)
+
+  @doc "Get all known enum types with their values"
   @spec get_enums(map) :: %{String.t => [String.t]}
-  def get_enums(db)
+  def   get_enums(db)
 end

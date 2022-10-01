@@ -1,36 +1,40 @@
 defmodule Plsm.IO.Export do
+  alias Plsm.Database.Column
+
   @doc """
     Generate the schema field based on the database type
   """
-  def type_output({name, type, is_primary_key?}, known_enums, max_name_wid, max_type_wid) do
+  def type_output(col, known_enums, max_name_wid, max_type_wid) do
+    %Column{name: name, type: type, primary_key: is_pk, auto_inc: auto_inc} = col
     escaped_name    = escaped_name(name)
-    {col_type,vals} = map_type(type, known_enums)
+    {col_type,vals} = map_type(type, known_enums, auto_inc)
 
-    type_output_with_source(escaped_name, name, col_type, is_primary_key?, vals, max_name_wid, max_type_wid)
+    type_output_with_source(escaped_name, name, col_type, is_pk, vals, max_name_wid, max_type_wid)
     |> four_space()
   end
 
-  defp map_type(:boolean),   do: ":boolean"
-  defp map_type(:decimal),   do: ":decimal"
-  defp map_type(:float),     do: ":float"
-  defp map_type(:string),    do: ":string"
-  defp map_type(:text),      do: ":string"
-  defp map_type(:map),       do: ":map"
-  defp map_type(:date),      do: ":date"
-  defp map_type(:time),      do: ":time"
-  defp map_type(:timestamp), do: ":naive_datetime"
-  defp map_type(:integer),   do: ":integer"
-  defp map_type(:uuid),      do: "Ecto.UUID"
+  defp map_type(:boolean,       _), do: ":boolean"
+  defp map_type(:decimal,       _), do: ":decimal"
+  defp map_type(:float,         _), do: ":float"
+  defp map_type(:string,        _), do: ":string"
+  defp map_type(:text,          _), do: ":string"
+  defp map_type(:map,           _), do: ":map"
+  defp map_type(:date,          _), do: ":date"
+  defp map_type(:time,          _), do: ":time"
+  defp map_type(:timestamp,     _), do: ":naive_datetime"
+  defp map_type(:integer,    true), do: ":id"
+  defp map_type(:integer,   false), do: ":integer"
+  defp map_type(:uuid,          _), do: "Ecto.UUID"
 
-  defp map_type(type) when is_atom(type), do: to_string(type)
+  defp map_type(type, _) when is_atom(type), do: to_string(type)
 
-  defp map_type({:none, type}, known_enums) do
+  defp map_type({:none, type}, known_enums, _auto_inc) do
     case Map.get(known_enums, type) do
       nil  -> raise RuntimeError, message: "Unknown column type: #{type}"
       vals -> {"Ecto.Enum",  Enum.map(vals, & ":"<>to_string(&1))}
     end
   end
-  defp map_type(type, _known_enums), do: {map_type(type), []}
+  defp map_type(type, _known_enums, auto_inc), do: {map_type(type, auto_inc), []}
 
   ## When escaped name and name are the same, source option is not needed
   defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?, vals, max_name_wid, max_type_wid) do
@@ -63,18 +67,24 @@ defmodule Plsm.IO.Export do
   def write(schema, name, path \\ "") do
     filename  = Path.join(path, "#{name}.ex")
     exists    = File.exists?(filename)
-    overwrite = case :erlang.get(:overwrite) do
-                  nil -> Application.get_env(:plsm, :overwrite)
-                  val -> val
+    overwrite = not exists ||
+                case :erlang.get(:overwrite) do
+                  :undefined -> Application.get_env(:plsm, :overwrite, nil)
+                  val        -> val
                 end
     ok =
-      if overwrite == true or not exists do
-        true
+      if overwrite != nil do
+        overwrite
       else
-        res = read_line("File #{filename} exists. Overwrite [N/y/a]: ", ["y","n","a"], "n")
+        res = read_line(
+          "File #{filename} exists. Overwrite [(N)o / (y)es / (a)ll / (s)kip all]: ",
+          ["y","n","a","s"], "n")
         case res do
           "y" -> true
           "n" -> false
+          "s" ->
+            :erlang.put(:overwrite, false)
+            false
           "a" ->
             :erlang.put(:overwrite, true)
             true
@@ -82,7 +92,7 @@ defmodule Plsm.IO.Export do
       end
 
     if ok do
-      case File.open("#{path}#{name}.ex", [:write]) do
+      case File.open(filename, [:write]) do
         {:ok, file} ->
           IO.puts("#{exists && "Overwriting" || "Writing"} #{filename}")
           IO.binwrite(file, schema)
@@ -99,8 +109,8 @@ defmodule Plsm.IO.Export do
   @doc """
   Format the text of a specific table with the fields that are passed in. This is strictly formatting and will not verify the fields with the database
   """
-  @spec prepare(Plsm.Database.Table, String.t(), %{String.t => [String.t]})
-          :: {Plsm.Database.TableHeader, String.t()}
+  @spec prepare(Plsm.Database.Table.t, String.t(), %{String.t => [String.t]})
+          :: {Plsm.Database.TableHeader.t, String.t()}
   def prepare(table, project_name, enums \\ %{}) do
     output =
       module_declaration(project_name, table.header.name) <>
@@ -113,15 +123,16 @@ defmodule Plsm.IO.Export do
 
     max_name_wid  = Enum.map(trimmed_columns, &byte_size(str(&1.name))) |> Enum.max()
     max_type_wid  = Enum.map(trimmed_columns, &byte_size(str(&1.type))) |> Enum.max()
+
     column_output =
       trimmed_columns
       |> Enum.reduce("", fn column, a ->
-        a <> type_output({column.name, column.type, column.primary_key}, enums, max_name_wid, max_type_wid)
+        a <> type_output(column, enums, max_name_wid, max_type_wid)
       end)
 
     output = output <> column_output
 
-    belongs_to_output =
+    belongs_to =
       Enum.filter(table.columns, fn column ->
         column.foreign_table != nil and column.foreign_table != nil
       end)
@@ -129,7 +140,7 @@ defmodule Plsm.IO.Export do
         a <> belongs_to_output(project_name, column)
       end)
 
-    output = output <> belongs_to_output <> "\n"
+    output = output <> belongs_to <> "\n"
 
     output = output <> two_space(end_declaration())
     output = output <> "\n" <> changeset(table.columns) <> end_declaration()
@@ -138,7 +149,7 @@ defmodule Plsm.IO.Export do
   end
 
   defp str(s) when is_binary(s), do: s
-  defp str({:none,s}),           do: to_string(s)
+  defp str({:none, _}),          do: "Ecto.Enum"
   defp str(s),                   do: to_string(s)
 
   defp module_declaration(project_name, table_name) do
@@ -156,7 +167,7 @@ defmodule Plsm.IO.Export do
   end
 
   defp schema_prefix_declaration do
-    configs = Plsm.Common.Configs.load_configs()
+    configs = Plsm.Config.load_config()
 
     case configs.database.schema do
       "public" -> ""
@@ -184,16 +195,34 @@ defmodule Plsm.IO.Export do
            |> wrap(80, ", ")
            |> Enum.map(&space(&1, 6))
            |> Enum.join("\n")
-    output <> four_space("|> cast(params, [\n")
+    output = output <> four_space("|> cast(params, [\n")
            <> cols <> "\n" <> four_space("])\n")
-           <> two_space("end\n")
+    req    = Enum.filter(columns, fn c ->
+              not c.nullable and (not (c.primary_key || false) or not (c.auto_inc || false))
+            end)
+            |> Enum.map(& &1.name)
+    output =
+      if req == [] do
+        output
+      else
+        req  = Enum.map(req, &":#{escaped_name(&1)}")
+            |> wrap(80, ", ")
+            |> Enum.map(&space(&1, 6))
+            |> Enum.join("\n")
+        output <> four_space("|> validate_required([\n")
+               <> req <> "\n" <> four_space("])\n")
+      end
+    output <> two_space("end\n")
   end
 
   @spec belongs_to_output(String.t(), Plsm.Database.Column) :: String.t()
-  defp belongs_to_output(project_name, column) do
-    column_name = column.name |> String.trim_trailing("_id")
-    table_name = Plsm.Database.TableHeader.table_name(column.foreign_table)
-    "\n" <> four_space("belongs_to :#{column_name}, #{project_name}.#{table_name}")
+  defp belongs_to_output(proj_name, col) do
+    col_name = col.name |> String.trim_trailing("_id")
+    tab_name = Plsm.Database.TableHeader.table_name(col.foreign_table)
+    fk_info  = (col.foreign_field != col.name or
+               (col.foreign_field not in [nil, ""] and col.foreign_field != "id")) &&
+              ", references: :"<>col.foreign_field || ""
+    "\n" <> four_space("belongs_to :#{col_name}, #{proj_name}.#{tab_name}#{fk_info}")
   end
 
   defp remove_foreign_keys(columns) do
@@ -209,16 +238,22 @@ defmodule Plsm.IO.Export do
 
   defp read_line(prompt, valid, def) do
     IO.binwrite(prompt)
-    res = IO.read(:stdio, :line) |> String.downcase()
+    res = IO.read(:stdio, :line) |> String.trim() |> String.downcase()
     cond do
-      res in valid -> res
-      def != nil   -> def
-      true         -> read_line(prompt, valid, def)
+      res in valid             -> res
+      res == "" and def != nil -> def
+      true                     -> read_line(prompt, valid, def)
     end
   end
 
-  # This is the exported function: it passes the initial
-  # result set to the internal versions
+  @doc """
+  For the given list of words wrap them to lines so that they fit the margin
+
+  ## Example
+    iex> wrap(["abc", "efg", "hij"], 8 )
+  """
+
+  @spec wrap([String.t], integer, String.t) :: [String.t]
   def wrap(words, margin, delim), do:
     words |> wrap([""], margin, delim) |> :lists.reverse
 
@@ -233,10 +268,10 @@ defmodule Plsm.IO.Export do
   # Or to a line that's already partially full. There are two cases:
   # 1. The word fits
   def wrap([word], [curr_line | prev_lines], margin, delim)
-    when byte_size(word) + byte_size(curr_line) <= margin, do:
+    when byte_size(word) + byte_size(curr_line) + byte_size(delim) <= margin, do:
       wrap([], ["#{curr_line}#{word}" | prev_lines], margin, delim)
   def wrap([word | rest], [curr_line | prev_lines], margin, delim)
-    when byte_size(word) + byte_size(curr_line) <= margin, do:
+    when byte_size(word) + byte_size(curr_line) + byte_size(delim) <= margin, do:
       wrap(rest, ["#{curr_line}#{word}#{delim}" | prev_lines], margin, delim)
 
   # 2. The word doesn't fit, so we create a new line
