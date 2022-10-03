@@ -21,9 +21,11 @@ This will create a skeleton config file to the given config file. If you don't s
 
 Once you have your config file generated then you are ready to run plsm. You do this by running
 
-`mix plsm`
+`mix plsm [-t|--table Table]`
 
-You are able to change the location of the model file output in the configuration file
+You are able to change the location of the model file output in the configuration file. If
+`-t|--table Table` argument is given, the schemas will be generated only for the specified
+table(s).
 
 
 ## Configuration Options
