@@ -44,12 +44,11 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
   end
 
   @spec get_columns(%PostgreSQL{}, TableHeader.t) :: [Column.t]
-  def get_columns(db, table) do
+  def get_columns(db, tab_header) do
     {_, result} = Postgrex.query(db.connection, """
       SELECT DISTINCT
         a.attname as column_name,
         UPPER(format_type(a.atttypid, a.atttypmod)) as data_type,
-        coalesce(i.indisprimary,false) as primary_key,
         f.references_table as foreign_table,
         LOWER(f.references_field) as foreign_field,
         a.attnotnull as not_null,
@@ -82,21 +81,34 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
 
         WHERE lower(tc.constraint_type) in ('foreign key')
       ) as f on a.attname = f.field
-      LEFT JOIN pg_index i ON
-          (pgc.oid = i.indrelid AND i.indkey[0] = a.attnum)
       WHERE a.attnum > 0 AND pgc.oid = a.attrelid
       AND pg_table_is_visible(pgc.oid)
       AND NOT a.attisdropped
       AND     a.attnum   > 0
-      AND pgc.relname = '#{table.name}'
+      AND pgc.relname = '#{tab_header.name}'
       ORDER BY a.attnum
       """, [])
 
-    result.rows
-    |> Enum.map(&to_column/1)
+    {_, %{rows: pk_rows}} = Postgrex.query(db.connection, """
+      SELECT
+        pg_attribute.attname,
+        pg_attribute.attnum as num,
+        format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+      FROM pg_index, pg_class, pg_attribute, pg_namespace
+      WHERE
+        indrelid = pg_class.oid AND
+        pg_class.relname = '#{tab_header.name}' AND
+        pg_class.relnamespace = pg_namespace.oid AND
+        pg_attribute.attrelid = pg_class.oid AND
+        pg_attribute.attnum = any(pg_index.indkey)
+      AND indisprimary
+      """, [])
+
+    prim_keys = Enum.map(pk_rows, &hd(&1))
+    Enum.map(result.rows, &to_column(&1, Enum.member?(prim_keys, hd(&1))))
   end
 
-  defp to_column([name, data_type, is_pk, fk_table, fk_field, required, def, _num]) do
+  defp to_column([name, data_type, fk_table, fk_field, required, def, _num], is_pk) do
     {auto_inc, len, type} = get_type(data_type)
 
     auto_inc = auto_inc || (def && String.downcase(def) =~ "nextval(")

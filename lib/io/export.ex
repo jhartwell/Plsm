@@ -36,23 +36,13 @@ defmodule Plsm.IO.Export do
   end
   defp map_type(type, _known_enums, auto_inc), do: {map_type(type, auto_inc), []}
 
-  ## When escaped name and name are the same, source option is not needed
-  defp type_output_with_source(escaped_name, escaped_name, mapped_type, is_primary_key?, vals, max_name_wid, max_type_wid) do
-    if is_primary_key? do
-      "field :#{nm(escaped_name, max_name_wid)} #{nm(mapped_type, max_type_wid)} primary_key: true#{add_vals(vals)}\n"
-    else
-      "field :#{nm(escaped_name, max_name_wid)} #{nm(mapped_type, max_type_wid, false)}#{add_vals(vals)}\n"
-    end
-  end
-
   ## When escaped name and name are different, add a source option poitning to
   ## the original field name as an atom
   defp type_output_with_source(escaped_name, name, mapped_type, is_primary_key?, vals, max_name_wid, max_type_wid) do
-    if is_primary_key? do
-      "field :#{nm(escaped_name, max_name_wid)} #{nm(mapped_type, max_type_wid)}, primary_key: true, source: :\"#{name}\"#{add_vals(vals)}\n"
-    else
-      "field :#{nm(escaped_name, max_name_wid)} #{nm(mapped_type, max_type_wid, false)}, source: :\"#{name}\"#{add_vals(vals)}\n"
-    end
+    str = "field :#{nm(escaped_name, max_name_wid)}, #{nm(mapped_type, max_type_wid)}"
+    str = is_primary_key?      && (str <> ", primary_key: #{is_primary_key?}") || str
+    str = name != escaped_name && (str <> ", source: :\"#{name}\"")            || str
+    str <> add_vals(vals) <> "\n"
   end
 
   defp nm(s, wid, add_comma \\ true) when is_binary(s), do:
@@ -112,14 +102,15 @@ defmodule Plsm.IO.Export do
   @spec prepare(Plsm.Database.Table.t, String.t(), %{String.t => [String.t]})
           :: {Plsm.Database.TableHeader.t, String.t()}
   def prepare(table, project_name, enums \\ %{}) do
-    output =
-      module_declaration(project_name, table.header.name) <>
-        model_inclusion() <>
-        primary_key_disable() <>
-        schema_prefix_declaration() <>
-        schema_declaration(table.header.name)
+    output = [
+      module_declaration(project_name, table.header.name),
+      model_inclusion(),
+      primary_key_disable(),
+      schema_prefix_declaration(),
+      schema_declaration(table.header.name)
+    ]
 
-    trimmed_columns = remove_foreign_keys(table.columns)
+    trimmed_columns = remove_foreign_keys(table.columns, table.header.name)
 
     max_name_wid  = Enum.map(trimmed_columns, &byte_size(str(&1.name))) |> Enum.max()
     max_type_wid  = Enum.map(trimmed_columns, &byte_size(str(&1.type))) |> Enum.max()
@@ -130,21 +121,20 @@ defmodule Plsm.IO.Export do
         a <> type_output(column, enums, max_name_wid, max_type_wid)
       end)
 
-    output = output <> column_output
-
     belongs_to =
-      Enum.filter(table.columns, fn column ->
-        column.foreign_table != nil and column.foreign_table != nil
-      end)
-      |> Enum.reduce("", fn column, a ->
-        a <> belongs_to_output(project_name, column)
-      end)
+      table.columns
+      |> Enum.filter(& &1.foreign_table != nil and &1.foreign_field != nil and
+                     (&1.foreign_table != table.header.name or &1.foreign_field != &1.name))
+      |> Enum.reduce([], & [&2, belongs_to_output(project_name, &1)])
 
-    output = output <> belongs_to <> "\n"
+    output = :erlang.iolist_to_binary([
+      output, column_output, belongs_to, (belongs_to == [] && [] || "\n"),
+      two_space(end_declaration()), "\n",
+      changeset(table.columns),
+      end_declaration(),
+      end_declaration(),
+    ])
 
-    output = output <> two_space(end_declaration())
-    output = output <> "\n" <> changeset(table.columns) <> end_declaration()
-    output <> end_declaration()
     {table.header, output}
   end
 
@@ -222,12 +212,13 @@ defmodule Plsm.IO.Export do
     fk_info  = (col.foreign_field != col.name or
                (col.foreign_field not in [nil, ""] and col.foreign_field != "id")) &&
               ", references: :"<>col.foreign_field || ""
-    "\n" <> four_space("belongs_to :#{col_name}, #{proj_name}.#{tab_name}#{fk_info}")
+    ["\n", four_space("belongs_to :#{col_name}, #{proj_name}.#{tab_name}#{fk_info}")]
   end
 
-  defp remove_foreign_keys(columns) do
-    Enum.filter(columns, fn column ->
-      column.foreign_table == nil and column.foreign_field == nil
+  defp remove_foreign_keys(columns, table_name) do
+    Enum.filter(columns, fn col ->
+      (col.foreign_table == nil        and col.foreign_field == nil) or
+      (col.foreign_table == table_name &&  col.foreign_field == col.name)
     end)
   end
 
