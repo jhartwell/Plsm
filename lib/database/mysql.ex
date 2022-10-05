@@ -1,24 +1,24 @@
 defmodule Plsm.Database.MySql do
-  defstruct server:     "localhost",
-            port:       "3306",
-            username:   "username",
-            password:   "password",
-            database:   "db",
+  defstruct server: "localhost",
+            port: "3306",
+            username: "username",
+            password: "password",
+            database: "db",
             connection: nil,
-            app:        :myxql
+            app: :myxql
 end
 
 defimpl Plsm.Database, for: Plsm.Database.MySql do
   alias Plsm.Database.{MySql, TableHeader, Column}
 
-  @spec connect(%MySql{}) :: Plsm.Database.t
+  @spec connect(%MySql{}) :: Plsm.Database.t()
   def connect(db) do
     {_, conn} =
       MyXQL.start_link(
-       protocol: :tcp,
+        protocol: :tcp,
         hostname: db.server,
         username: db.username,
-        port:     db.port,
+        port: db.port,
         password: db.password,
         database: db.database
       )
@@ -27,7 +27,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
   end
 
   # pass in a database and then get the tables using the mariaex query then turn the rows into a table
-  @spec get_tables(%MySql{}) :: [TableHeader.t]
+  @spec get_tables(%MySql{}) :: [TableHeader.t()]
   def get_tables(db) do
     {_, result} = MyXQL.query(db.connection, "SHOW TABLES")
 
@@ -36,7 +36,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
     |> Enum.map(fn x -> %TableHeader{database: db, name: x} end)
   end
 
-  @spec get_columns(%MySql{}, TableHeader.t) :: [Column.t]
+  @spec get_columns(%MySql{}, TableHeader.t()) :: [Column.t()]
   def get_columns(db, table) do
     {_, result} = MyXQL.query(db.connection, "show columns from `#{table.name}`")
 
@@ -45,7 +45,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
   end
 
   @doc "Not implemented"
-  @spec get_enums(%MySql{}) :: %{String.t => [String.t]}
+  @spec get_enums(%MySql{}) :: %{String.t() => [String.t()]}
   def get_enums(_db), do: %{}
 
   defp to_column(row) do
@@ -66,7 +66,7 @@ defimpl Plsm.Database, for: Plsm.Database.MySql do
       String.starts_with?(downcase, "tinyint(1)") -> :boolean
       String.starts_with?(downcase, "tinyint") -> :integer
       String.starts_with?(downcase, "bit") -> :integer
-      String.contains?(downcase,    "char") -> :string
+      String.contains?(downcase, "char") -> :string
       String.starts_with?(downcase, "text") -> :string
       String.starts_with?(downcase, "float") -> :float
       String.starts_with?(downcase, "double") -> :float

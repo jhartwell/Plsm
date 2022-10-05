@@ -34,11 +34,11 @@ import Config
 config :plsm,
   module_name: "module name",
   destination: "output path",
-  server:      "localhost",
-  port:        5432,
-  database:    "name of database",
-  username:    "username",
-  password:    "password",
-  type:        :postgres
+  server: "localhost",
+  port: 5432,
+  database: "name of database",
+  username: "username",
+  password: "password",
+  type: :postgres
 
 File.exists?("config/#{config_env()}.exs") && import_config "#{config_env()}.exs"

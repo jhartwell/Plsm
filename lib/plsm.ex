@@ -5,14 +5,15 @@ defmodule Mix.Tasks.Plsm do
     {opts, _, errors} =
       OptionParser.parse(params,
         aliases: [t: :table, h: :help],
-        strict:  [table: [:string, :keep], help: :boolean])
+        strict: [table: [:string, :keep], help: :boolean]
+      )
 
-    opts[:help]  && help()
+    opts[:help] && help()
 
     tables =
       opts
-      |> Enum.filter(& elem(&1, 0) == :table)
-      |> Enum.map(&elem(&1,1)|> String.downcase)
+      |> Enum.filter(&(elem(&1, 0) == :table))
+      |> Enum.map(&(elem(&1, 1) |> String.downcase()))
 
     errors != [] && raise ArgumentError, message: "Invalid command-line options"
 
@@ -22,17 +23,17 @@ defmodule Mix.Tasks.Plsm do
 
     {:ok, _started} = Application.ensure_all_started(db.app)
 
-    db    = Plsm.Database.connect(db)
+    db = Plsm.Database.connect(db)
     enums = Plsm.Database.get_enums(db)
 
     db
     |> Plsm.Database.get_tables()
-    |> Enum.filter(& tables==[] or (&1.name in tables))
+    |> Enum.filter(&(tables == [] or &1.name in tables))
     |> Enum.map(fn x ->
-      columns    = Plsm.Database.get_columns(x.database, x)
-      table      = %Plsm.Database.Table{header: x, columns: columns}
+      columns = Plsm.Database.get_columns(x.database, x)
+      table = %Plsm.Database.Table{header: x, columns: columns}
       {hdr, out} = Plsm.IO.Export.prepare(table, config.project.name, enums)
-      filename   = singularize(hdr.name)
+      filename = singularize(hdr.name)
       Plsm.IO.Export.write(out, filename, config.project.destination)
     end)
   end
@@ -49,13 +50,13 @@ defmodule Mix.Tasks.Plsm do
 
   defp help() do
     IO.puts("""
-      Usage: mix plsm Options
+    Usage: mix plsm Options
 
-      Options:
-      ========
-        -t|--table Table    - limit scema generation to this table only
-        -h|--help           - this help screen
-      """)
+    Options:
+    ========
+      -t|--table Table    - limit scema generation to this table only
+      -h|--help           - this help screen
+    """)
 
     System.halt(1)
   end
@@ -84,8 +85,9 @@ defmodule Mix.Tasks.Plsm.Config do
   defp config_exists?(filename) do
     try do
       Config.Reader.read!(filename)[:plsm] != nil
-    rescue _ ->
-      false
+    rescue
+      _ ->
+        false
     end
   end
 end
