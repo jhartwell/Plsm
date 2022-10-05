@@ -57,6 +57,7 @@ defmodule Plsm.IO.Export do
   def write(schema, name, path \\ "") do
     filename  = Path.join(path, "#{name}.ex")
     exists    = File.exists?(filename)
+    path != "" && (:ok = :filelib.ensure_path(path))
     overwrite = not exists ||
                 case :erlang.get(:overwrite) do
                   :undefined -> Application.get_env(:plsm, :overwrite, nil)
@@ -131,7 +132,6 @@ defmodule Plsm.IO.Export do
       output, column_output, belongs_to, (belongs_to == [] && [] || "\n"),
       two_space(end_declaration()), "\n",
       changeset(table.columns),
-      end_declaration(),
       end_declaration(),
     ])
 
