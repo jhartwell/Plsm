@@ -8,6 +8,7 @@ defmodule Plsm.Mixfile do
       elixir: "~> 1.7",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
+      elixirc_paths: ["lib"] ++ (Mix.env() == :test && ["test/schemas"] || []),
       description: description(),
       package: package(),
       deps: deps()
@@ -20,12 +21,12 @@ defmodule Plsm.Mixfile do
 
   defp deps do
     [
-      {:ex_doc, "~> 0.23.0", only: :dev, runtime: false},
-      {:myxql, "~> 0.5"},
-      {:postgrex, "~> 0.15"},
+      {:ex_doc, "~> 0.29", only: :dev, runtime: false},
+      {:myxql, "~> 0.6"},
+      {:postgrex, "~> 0.16"},
       {:inflex, "~> 2.1"},
-      {:ecto_sql, "~> 3.5.3", only: :test},
-      {:mock, "~> 0.2.0", only: :test}
+      {:ecto_sql, "~> 3.9", only: :test},
+      {:mock, "~> 0.3", only: :test}
     ]
   end
 

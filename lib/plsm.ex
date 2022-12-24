@@ -17,6 +17,8 @@ defmodule Mix.Tasks.Plsm do
 
     errors != [] && raise ArgumentError, message: "Invalid command-line options"
 
+    :ok = Mix.Task.run("app.config")
+
     config = Plsm.Config.load_config()
 
     db = Plsm.Database.Factory.create(config)

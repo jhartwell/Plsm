@@ -215,6 +215,9 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
       "TEXT" <> _ ->
         {false, nil, :string}
 
+      "CITEXT" <> _ ->
+        {false, nil, :string}
+
       "TIME" <> _ ->
         {false, nil, :time}
 

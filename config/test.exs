@@ -11,6 +11,10 @@ config :plsm,
   username: System.get_env("DB_USER", "postgres"),
   password: System.get_env("DB_PASS", "postgres"),
   type: :postgres,
-  typed_schema: true
-
+  typed_schema: false
 # overwrite:     false
+
+#config :tmp_app, TmpApp.Repo,
+#  database: System.get_env("DB_NAME", "db"),
+#  username: System.get_env("DB_USER", "postgres"),
+#  password: System.get_env("DB_PASS", "postgres")

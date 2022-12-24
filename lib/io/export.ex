@@ -23,7 +23,7 @@ defmodule Plsm.IO.Export do
   defp map_type(:time, _), do: ":time"
   defp map_type(:timestamp, _), do: ":naive_datetime"
   defp map_type(:integer, true), do: ":id"
-  defp map_type(:integer, false), do: ":integer"
+  defp map_type(:integer, _), do: ":integer"
   defp map_type(:uuid, _), do: "Ecto.UUID"
 
   defp map_type(type, _) when is_atom(type), do: to_string(type)
@@ -48,7 +48,7 @@ defmodule Plsm.IO.Export do
          max_name_wid,
          max_type_wid
        ) do
-    str = "field :#{nm(escaped_name, max_name_wid)}, #{nm(mapped_type, max_type_wid)}"
+    str = "field :#{nm(escaped_name, max_name_wid)} #{nm(mapped_type, max_type_wid, false)}"
     str = (is_primary_key? && str <> ", primary_key: #{is_primary_key?}") || str
     str = (name != escaped_name && str <> ", source: :\"#{name}\"") || str
     str <> add_vals(vals) <> "\n"

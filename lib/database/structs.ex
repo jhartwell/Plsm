@@ -7,9 +7,11 @@ defmodule Plsm.Database.Factory do
   def create(config) do
     {db_type, db_app, out} =
       case config.database.type do
-        :mysql -> {Plsm.Database.MySql, :myxql, "MySql"}
-        :postgres -> {Plsm.Database.PostgreSQL, :postgrex, "PostgreSQL"}
-        _ -> {Plsm.Database.PostgreSQL, :postgrex, "default database PostgreSQL"}
+        :mysql                -> {Plsm.Database.MySql,      :myxql,    "MySql"}
+        Ecto.Adapters.MyXQL   -> {Plsm.Database.MySql,      :myxql,    "MySql"}
+        :postgres             -> {Plsm.Database.PostgreSQL, :postgrex, "PostgreSQL"}
+        Ecto.Adapters.Postres -> {Plsm.Database.PostgreSQL, :postgrex, "PostgreSQL"}
+        _                     -> {Plsm.Database.PostgreSQL, :postgrex, "default database PostgreSQL"}
       end
 
     IO.puts("Using #{out}...")
