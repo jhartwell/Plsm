@@ -219,7 +219,7 @@ defimpl Plsm.Database, for: Plsm.Database.PostgreSQL do
         {false, nil, :string}
 
       "TIME" <> _ ->
-        {false, nil, :time}
+        {false, nil, :naive_datetime}
 
       "TIMESTAMP" <> _ ->
         {false, nil, (type =~ "WITH TIME ZONE" && :utc_datetime) || :naive_datetime}
