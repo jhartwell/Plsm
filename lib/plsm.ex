@@ -1,6 +1,21 @@
 defmodule Mix.Tasks.Ecto.Gen.Schema do
   use Mix.Task
 
+  @shortdoc "Creates Ecto schemas from the existing DB repository"
+
+  @moduledoc """
+  Create Ecto schemas from the existing DB repository.
+
+  ## Examples
+
+    $ mix ecto.gen.schema
+
+  ## Command line options
+
+    * `-t|--table Table` - process this table only (multiple `-t` arguments are allowed)
+    * `-h|--help`        - this help screen
+  """
+
   def run(params) do
     {opts, _, errors} =
       OptionParser.parse(params,
