@@ -16,6 +16,7 @@ defmodule Mix.Tasks.Ecto.Gen.Schema do
     * `-h|--help`        - this help screen
   """
 
+  @impl true
   def run(params) do
     {opts, _, errors} =
       OptionParser.parse(params,
