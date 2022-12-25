@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Plsm do
+defmodule Mix.Tasks.Ecto.Gen.Schema do
   use Mix.Task
 
   def run(params) do
@@ -102,5 +102,5 @@ end
 defmodule Mix.Tasks.Plasm do
   use Mix.Task
 
-  def run(_), do: Mix.Tasks.Plsm.run(nil)
+  def run(_), do: Mix.Tasks.Ecto.Gen.Schema.run(nil)
 end
