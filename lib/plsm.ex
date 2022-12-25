@@ -68,7 +68,7 @@ defmodule Mix.Tasks.Ecto.Gen.Schema do
 
   defp help() do
     IO.puts("""
-    Usage: mix plsm Options
+    Usage: mix ecto.gen.schema Options
 
     Options:
     ========
