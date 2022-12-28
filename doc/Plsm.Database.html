@@ -10,13 +10,12 @@
     <title>Plsm.Database — plsm v2.4.0</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
 
-      <link rel="canonical" href="https://hexdocs.pm/plsm/Plsm.Database.html" />
-
     <script src="dist/sidebar_items-304a1cc72b.js"></script>
 
       <script src="docs_config.js"></script>
 
     <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
 
   </head>
   <body data-type="modules">
@@ -115,16 +114,7 @@ Plsm.Database <small>protocol</small> <small class="app-vsn">(plsm v2.4.0)</smal
 
   </div>
 
-    <div class="summary-synopsis"><p>  Connect to the given database</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#create/2">create(db, configs)</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>  Create a database struct that implements the Plsm.Database protocol.</p></div>
+    <div class="summary-synopsis"><p>Connect to the given database</p></div>
 
 </div>
 <div class="summary-row">
@@ -133,7 +123,16 @@ Plsm.Database <small>protocol</small> <small class="app-vsn">(plsm v2.4.0)</smal
 
   </div>
 
-    <div class="summary-synopsis"><p>  Get the columns for the table that is passed in</p></div>
+    <div class="summary-synopsis"><p>Get the columns for the table that is passed in</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_enums/1">get_enums(db)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Get all known enum types with their values</p></div>
 
 </div>
 <div class="summary-row">
@@ -142,7 +141,7 @@ Plsm.Database <small>protocol</small> <small class="app-vsn">(plsm v2.4.0)</smal
 
   </div>
 
-    <div class="summary-synopsis"><p>  Get all of the tables that are in the database that was selected</p></div>
+    <div class="summary-synopsis"><p>Get all of the tables that are in the database that was selected</p></div>
 
 </div>
 
@@ -177,7 +176,18 @@ Types
       <h2>Specs</h2>
       <div class="specs">
 
-          <pre>t() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()</pre>
+          <pre>t() :: %Plsm.Database{
+  app: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(),
+  database: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  overwrite: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  password: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  port: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>(),
+  schema: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  server: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  type: :mysql | :postgres,
+  typed_schema: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  username: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
+}</pre>
 
       </div>
 
@@ -211,24 +221,14 @@ Functions
 
   <section class="docstring">
 
-<p>  Connect to the given database</p>
-  </section>
-</section>
-<section class="detail" id="create/2">
+      <h2>Specs</h2>
+      <div class="specs">
 
-  <div class="detail-header">
-    <a href="#create/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature">create(db, configs)</h1>
+          <pre>connect(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="#t:t/0">t</a>()</pre>
 
+      </div>
 
-  </div>
-
-  <section class="docstring">
-
-<p>  Create a database struct that implements the Plsm.Database protocol.</p>
+<p>Connect to the given database</p>
   </section>
 </section>
 <section class="detail" id="get_columns/2">
@@ -245,7 +245,38 @@ Functions
 
   <section class="docstring">
 
-<p>  Get the columns for the table that is passed in</p>
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>get_columns(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(), <a href="Plsm.Database.TableHeader.html#t:t/0">Plsm.Database.TableHeader.t</a>()) :: [<a href="Plsm.Database.Column.html#t:t/0">Plsm.Database.Column.t</a>()]</pre>
+
+      </div>
+
+<p>Get the columns for the table that is passed in</p>
+  </section>
+</section>
+<section class="detail" id="get_enums/1">
+
+  <div class="detail-header">
+    <a href="#get_enums/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">get_enums(db)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>get_enums(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: %{required(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; [<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()]}</pre>
+
+      </div>
+
+<p>Get all known enum types with their values</p>
   </section>
 </section>
 <section class="detail" id="get_tables/1">
@@ -262,7 +293,14 @@ Functions
 
   <section class="docstring">
 
-<p>  Get all of the tables that are in the database that was selected</p>
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>get_tables(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: [<a href="Plsm.Database.TableHeader.html#t:t/0">Plsm.Database.TableHeader.t</a>()]</pre>
+
+      </div>
+
+<p>Get all of the tables that are in the database that was selected</p>
   </section>
 </section>
 
@@ -304,6 +342,7 @@ Functions
   </div>
 </section>
 </div>
+
 
   </body>
 </html>

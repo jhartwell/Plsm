@@ -7,16 +7,15 @@
     <meta name="generator" content="ExDoc v0.23.0">
     <meta name="project" content="plsm v2.4.0">
 
-    <title>Plsm.Database.Common — plsm v2.4.0</title>
+    <title>Plsm.Database.Factory — plsm v2.4.0</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
-
-      <link rel="canonical" href="https://hexdocs.pm/plsm/Plsm.Database.Common.html" />
 
     <script src="dist/sidebar_items-304a1cc72b.js"></script>
 
       <script src="docs_config.js"></script>
 
     <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
 
   </head>
   <body data-type="modules">
@@ -76,7 +75,7 @@ plsm
     <div id="content" class="content-inner">
 
       <h1>
-Plsm.Database.Common <small class="app-vsn">(plsm v2.4.0)</small>
+Plsm.Database.Factory <small class="app-vsn">(plsm v2.4.0)</small>
 
       </h1>
 
@@ -97,11 +96,12 @@ Plsm.Database.Common <small class="app-vsn">(plsm v2.4.0)</small>
     </h2>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#create/1">create(configs)</a>
+    <a href="#create/1">create(config)</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>  Create a struct that implements the Plsm.Database protocol based on the type of database that is passed in</p></div>
+    <div class="summary-synopsis"><p>Create a struct that implements the Plsm.Database protocol based on the type
+of database that is passed in</p></div>
 
 </div>
 
@@ -126,7 +126,7 @@ Functions
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">create(configs)</h1>
+    <h1 class="signature">create(config)</h1>
 
 
   </div>
@@ -136,11 +136,12 @@ Functions
       <h2>Specs</h2>
       <div class="specs">
 
-          <pre>create(Plsm.Common.Configs) :: Plsm.Database</pre>
+          <pre>create(<a href="Plsm.Config.html#t:t/0">Plsm.Config.t</a>()) :: <a href="Plsm.Database.html#t:t/0">Plsm.Database.t</a>()</pre>
 
       </div>
 
-<p>  Create a struct that implements the Plsm.Database protocol based on the type of database that is passed in</p>
+<p>Create a struct that implements the Plsm.Database protocol based on the type
+of database that is passed in</p>
   </section>
 </section>
 
@@ -182,6 +183,7 @@ Functions
   </div>
 </section>
 </div>
+
 
   </body>
 </html>

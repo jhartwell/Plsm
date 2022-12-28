@@ -3,13 +3,10 @@ Mix.Tasks.Plasm.Config.html
 Mix.Tasks.Plasm.html
 Mix.Tasks.Plsm.Config.html
 Mix.Tasks.Plsm.html
-Plsm.Common.Configs.html
-Plsm.Config.Config.html
-Plsm.Configs.Database.html
-Plsm.Configs.Project.html
-Plsm.Configs.html
+Plsm.Config.Project.html
+Plsm.Config.html
 Plsm.Database.Column.html
-Plsm.Database.Common.html
+Plsm.Database.Factory.html
 Plsm.Database.MySql.html
 Plsm.Database.PostgreSQL.html
 Plsm.Database.Table.html
@@ -23,7 +20,7 @@ dist/html/fonts/icomoon.eot
 dist/html/fonts/icomoon.svg
 dist/html/fonts/icomoon.ttf
 dist/html/fonts/icomoon.woff
-dist/search_items-e2b7e1e7c4.js
-dist/sidebar_items-67ec123bbf.js
+dist/search_items-47eb325acf.js
+dist/sidebar_items-abdb5749aa.js
 index.html
 search.html

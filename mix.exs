@@ -8,6 +8,7 @@ defmodule Plsm.Mixfile do
       elixir: "~> 1.7",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
+      elixirc_paths: ["lib"] ++ (Mix.env() == :test && ["test/schemas"] || []),
       description: description(),
       package: package(),
       deps: deps()
@@ -15,16 +16,17 @@ defmodule Plsm.Mixfile do
   end
 
   def application do
-    [applications: [:postgrex, :myxql]]
+    [applications: [:postgrex, :myxql, :inflex]]
   end
 
   defp deps do
     [
-      {:ex_doc, "~> 0.23.0", only: :dev, runtime: false},
-      {:myxql, "~> 0.4.4"},
-      {:postgrex, "~> 0.15"},
-      {:ecto_sql, "~> 3.5.3", only: :test},
-      {:mock, "~> 0.2.0", only: :test}
+      {:ex_doc, "~> 0.29", only: :dev, runtime: false},
+      {:myxql, "~> 0.6"},
+      {:postgrex, "~> 0.16"},
+      {:inflex, "~> 2.1"},
+      {:ecto_sql, "~> 3.9", only: :test},
+      {:mock, "~> 0.3", only: :test}
     ]
   end
 
@@ -43,8 +45,7 @@ defmodule Plsm.Mixfile do
       source_url: "https://github.com/jhartwell/Plsm",
       homepage_url: "https://github.com/jhartwell/Plsm",
       links: %{"Github" => "https://github.com/jhartwell/Plsm"},
-      docs: [main: "Plsm",
-	     extras: ["README.md"]]
+      docs: [main: "Plsm", extras: ["README.md"]]
     ]
   end
 end

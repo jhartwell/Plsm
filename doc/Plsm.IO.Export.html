@@ -10,13 +10,12 @@
     <title>Plsm.IO.Export — plsm v2.4.0</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
 
-      <link rel="canonical" href="https://hexdocs.pm/plsm/Plsm.IO.Export.html" />
-
     <script src="dist/sidebar_items-304a1cc72b.js"></script>
 
       <script src="docs_config.js"></script>
 
     <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
 
   </head>
   <body data-type="modules">
@@ -97,7 +96,7 @@ Plsm.IO.Export <small class="app-vsn">(plsm v2.4.0)</small>
     </h2>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#prepare/2">prepare(table, project_name)</a>
+    <a href="#prepare/3">prepare(table, project_name, enums \\ %{})</a>
 
   </div>
 
@@ -106,7 +105,7 @@ Plsm.IO.Export <small class="app-vsn">(plsm v2.4.0)</small>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#type_output/1">type_output(arg)</a>
+    <a href="#type_output/4">type_output(col, known_enums, max_name_wid, max_type_wid)</a>
 
   </div>
 
@@ -115,11 +114,25 @@ Plsm.IO.Export <small class="app-vsn">(plsm v2.4.0)</small>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#wrap/3">wrap(words, margin, delim)</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#wrap/4">wrap(arg1, result, margin, delim)</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#write/3">write(schema, name, path \\ &quot;&quot;)</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>  Write the given schema to file.</p></div>
+    <div class="summary-synopsis"><p>Write the given schema to file.</p></div>
 
 </div>
 
@@ -137,14 +150,16 @@ Plsm.IO.Export <small class="app-vsn">(plsm v2.4.0)</small>
 Functions
           </h1>
           <div class="functions-list">
-<section class="detail" id="prepare/2">
+<section class="detail" id="prepare/3">
+
+    <span id="prepare/2"></span>
 
   <div class="detail-header">
-    <a href="#prepare/2" class="detail-link" title="Link to this function">
+    <a href="#prepare/3" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">prepare(table, project_name)</h1>
+    <h1 class="signature">prepare(table, project_name, enums \\ %{})</h1>
 
 
   </div>
@@ -154,24 +169,24 @@ Functions
       <h2>Specs</h2>
       <div class="specs">
 
-          <pre>prepare(Plsm.Database.Table, <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
-  {Plsm.Database.TableHeader, <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()}</pre>
-
-          <pre>prepare(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), Plsm.Database.Column) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+          <pre>prepare(<a href="Plsm.Database.Table.html#t:t/0">Plsm.Database.Table.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), %{
+  required(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; [<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()]
+}) ::
+  {<a href="Plsm.Database.TableHeader.html#t:t/0">Plsm.Database.TableHeader.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()}</pre>
 
       </div>
 
 <p>Format the text of a specific table with the fields that are passed in. This is strictly formatting and will not verify the fields with the database</p>
   </section>
 </section>
-<section class="detail" id="type_output/1">
+<section class="detail" id="type_output/4">
 
   <div class="detail-header">
-    <a href="#type_output/1" class="detail-link" title="Link to this function">
+    <a href="#type_output/4" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">type_output(arg)</h1>
+    <h1 class="signature">type_output(col, known_enums, max_name_wid, max_type_wid)</h1>
 
 
   </div>
@@ -179,6 +194,40 @@ Functions
   <section class="docstring">
 
 <p>  Generate the schema field based on the database type</p>
+  </section>
+</section>
+<section class="detail" id="wrap/3">
+
+  <div class="detail-header">
+    <a href="#wrap/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">wrap(words, margin, delim)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="wrap/4">
+
+  <div class="detail-header">
+    <a href="#wrap/4" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">wrap(arg1, result, margin, delim)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
   </section>
 </section>
 <section class="detail" id="write/3">
@@ -200,11 +249,11 @@ Functions
       <h2>Specs</h2>
       <div class="specs">
 
-          <pre>write(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: Any</pre>
+          <pre>write(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()</pre>
 
       </div>
 
-<p>  Write the given schema to file.</p>
+<p>Write the given schema to file.</p>
   </section>
 </section>
 
@@ -246,6 +295,7 @@ Functions
   </div>
 </section>
 </div>
+
 
   </body>
 </html>
