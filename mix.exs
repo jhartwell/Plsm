@@ -21,9 +21,9 @@ defmodule Plsm.Mixfile do
   defp deps do
     [
       {:ex_doc, "~> 0.23.0", only: :dev, runtime: false},
-      {:myxql, "~> 0.4.4"},
-      {:postgrex, "~> 0.15"},
-      {:ecto_sql, "~> 3.5.3", only: :test},
+      {:myxql, "~> 0.6", optional: true},
+      {:postgrex, "~> 0.16", optional: true},
+      {:ecto_sql, "~> 3.9", only: :test},
       {:mock, "~> 0.2.0", only: :test}
     ]
   end
@@ -43,8 +43,7 @@ defmodule Plsm.Mixfile do
       source_url: "https://github.com/jhartwell/Plsm",
       homepage_url: "https://github.com/jhartwell/Plsm",
       links: %{"Github" => "https://github.com/jhartwell/Plsm"},
-      docs: [main: "Plsm",
-	     extras: ["README.md"]]
+      docs: [main: "Plsm", extras: ["README.md"]]
     ]
   end
 end
